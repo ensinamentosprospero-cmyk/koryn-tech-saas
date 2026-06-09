@@ -45,23 +45,25 @@ Sistema SaaS multi-tenant para lojistas de eletrônicos personalizarem sua loja 
 
 ## Próximo passo exato (para o próximo agent)
 
-**GitHub publicado** — repositório remoto configurado e código enviado.
+**GitHub + Railway em produção** — deploy ativo.
 
-- **Repo:** https://github.com/ensinamentosprospero-cmyk/koryn-tech-saas
-- **Branch:** `main`
-- **Script local:** `PUBLICAR-GITHUB.bat` (login + push futuros)
+| Item | Valor |
+|------|-------|
+| **GitHub** | https://github.com/ensinamentosprospero-cmyk/koryn-tech-saas |
+| **Railway projeto** | `koryn-tech-saas` |
+| **URL pública** | https://web-production-b5f0a.up.railway.app |
+| **Health** | https://web-production-b5f0a.up.railway.app/api/health |
+| **Conta Railway** | conceicaorodney56@gmail.com |
+| **Volume SQLite** | `/app/server/data` → `web-volume` |
 
-**Próximo deploy (Railway):**
-1. railway.app → **New Project** → **Deploy from GitHub** → repo `koryn-tech-saas`
-2. Variáveis: `NODE_ENV=production`, `SERVE_STATIC=true`, `JWT_SECRET` (gerar), `VITE_TENANT_BASE_DOMAINS`
-3. **Volume:** montar em `/app/server/data` (SQLite persistente)
-4. Domínio custom + DNS wildcard para subdomínios de loja
+Variáveis já configuradas: `NODE_ENV`, `SERVE_STATIC`, `JWT_SECRET`, `APP_BASE_URL`, `VITE_TENANT_BASE_DOMAINS`, `STORE_DB_PATH`, `BILLING_PROVIDER=manual`.
 
-Quando o usuário solicitar:
-1. Ajudar com credenciais Railway / DNS / Stripe live
-2. **Supabase runtime** — migrar repositórios de SQLite para Postgres
-3. Nginx/Caddy na VPS com HTTPS
-4. **Não** alterar layout da loja pública
+**Próximos passos opcionais:**
+1. Domínio custom + DNS wildcard (`*.seudominio.com`) no Railway
+2. Stripe live (`BILLING_PROVIDER=stripe` + chaves)
+3. **Supabase runtime** — migrar repositórios de SQLite para Postgres
+4. Nginx/Caddy na VPS com HTTPS (alternativa ao Railway)
+5. **Não** alterar layout da loja pública
 
 ---
 

@@ -10,3 +10,7 @@ dist
 server/data/store.db
 server/data/store.db-journal
 
+# Logs locais de auth/deploy
+railway-auth.log
+gh-auth-*.txt
+
