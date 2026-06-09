@@ -58,8 +58,26 @@ export function resolveTenantIdFromHost() {
   }
 }
 
+export function resolveTenantIdFromPathname(pathname) {
+  try {
+    const match = String(pathname || '').match(/^\/loja\/([^/]+)\/?$/i);
+    if (!match) return null;
+
+    const normalized = normalizeTenantSlug(decodeURIComponent(match[1]));
+    storeTenantId(normalized);
+    return normalized;
+  } catch {
+    return null;
+  }
+}
+
 export function resolveTenantId() {
-  return resolveTenantIdFromUrl() || resolveTenantIdFromHost() || readStoredTenantId();
+  return (
+    resolveTenantIdFromUrl() ||
+    resolveTenantIdFromPathname(window.location.pathname) ||
+    resolveTenantIdFromHost() ||
+    readStoredTenantId()
+  );
 }
 
 export function shouldRenderPlatformApp(pathname = window.location.pathname) {
@@ -67,4 +85,4 @@ export function shouldRenderPlatformApp(pathname = window.location.pathname) {
   return isPlatformHostname(window.location.hostname, TENANT_BASE_DOMAINS);
 }
 
-export { buildTenantStoreUrl, isPlatformHostname, parseTenantBaseDomains, resolveTenantIdFromHostname };
+export { buildTenantStoreUrl, isPlatformHostname, parseTenantBaseDomains, resolveTenantIdFromHostname, supportsTenantSubdomains };

@@ -100,7 +100,5 @@ export function buildTenantStoreUrl(tenantId, { protocol, hostname, port, baseDo
     return `${resolvedProtocol}//${tenantId}.${baseDomain}${resolvedPort}/`;
   }
 
-  const url = new URL(`${resolvedProtocol}//${baseDomain}${resolvedPort}/`);
-  url.searchParams.set('loja', tenantId);
-  return url.toString();
+  return `${resolvedProtocol}//${baseDomain}${resolvedPort}/loja/${encodeURIComponent(tenantId)}`;
 }
