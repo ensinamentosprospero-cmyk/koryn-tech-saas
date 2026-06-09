@@ -23,7 +23,7 @@ Sistema SaaS multi-tenant para lojistas de eletrônicos personalizarem sua loja 
 3. **Não apagar `localStorage` do cliente** (cache legado do tenant `default`)
 4. **Não refazer o projeto do zero**
 5. **Assinatura/cobrança** implementada na FASE 3.5 — novas lojas exigem plano ativo (exceto tenant `default`)
-6. **Supabase/Postgres:** schema pronto (`schema.postgres.sql`); runtime da API ainda usa SQLite até migração completa dos repositórios
+6. **Supabase/Postgres:** runtime implementado — com `DATABASE_URL` a API usa Postgres; sem ela, SQLite local
 
 ---
 
@@ -59,12 +59,14 @@ Sistema SaaS multi-tenant para lojistas de eletrônicos personalizarem sua loja 
 Variáveis já configuradas: `NODE_ENV`, `SERVE_STATIC`, `JWT_SECRET`, `APP_BASE_URL`, `VITE_TENANT_BASE_DOMAINS`, `STORE_DB_PATH`, `BILLING_PROVIDER=manual`.
 
 **Próximos passos opcionais:**
-1. **Domínio custom `koryntech.com`** — script `CONFIGURAR-DOMINIO.bat` + DNS no provedor:
-   - Railway → serviço `web` → Settings → Networking → adicionar `koryntech.com` e `*.koryntech.com`
-   - DNS: `CNAME @` e `CNAME *` → `web-production-b5f0a.up.railway.app` (+ TXT/`_acme-challenge` do Railway)
-   - Variáveis já preparadas: `VITE_TENANT_BASE_DOMAINS=koryntech.com,web-production-b5f0a.up.railway.app`
-2. Stripe live (`BILLING_PROVIDER=stripe` + chaves)
-3. **Supabase runtime** — migrar repositórios de SQLite para Postgres
+1. **Supabase (Postgres)** — runtime pronto; falta só conectar:
+   - Script: `CONFIGURAR-SUPABASE.bat`
+   - Schema: `npm run db:migrate:postgres`
+   - Migrar dados SQLite: `npm run db:migrate:sqlite-to-postgres`
+   - Railway: `railway variable set DATABASE_URL="..." --service web`
+   - Health deve retornar `"databaseDriver":"postgres"`
+2. **Domínio custom** — adiado; script `CONFIGURAR-DOMINIO.bat`
+3. Stripe live (`BILLING_PROVIDER=stripe` + chaves)
 4. Nginx/Caddy na VPS com HTTPS (alternativa ao Railway)
 5. **Não** alterar layout da loja pública
 
@@ -98,8 +100,10 @@ Fluxo: **API → cache localStorage → defaults**
 
 | Camada | Arquivo |
 |--------|---------|
-| SQLite | `server/data/store.db` |
-| Conexão/schema | `server/db/database.js` |
+| SQLite local | `server/data/store.db` |
+| Postgres/Supabase | `DATABASE_URL` + `server/db/schema.postgres.sql` |
+| Abstração runtime | `server/db/dbClient.js` (SQLite ou Postgres) |
+| Conexão SQLite | `server/db/database.js` |
 | Repositório | `server/db/tenantRepository.js` |
 | Migração JSON→DB | `server/db/migrateFromJson.js` |
 | Facade API | `server/tenantStore.js` |
@@ -231,11 +235,19 @@ docker compose up -d --build
 - Volume `koryn_data` persiste o SQLite
 - Health: `curl http://localhost:3001/api/health`
 
-#### Opção C — Supabase (banco apenas, futuro)
+#### Opção C — Supabase (Postgres)
 
-1. Crie projeto no Supabase → copie `DATABASE_URL`
-2. Local: `DATABASE_URL=... npm run db:migrate:postgres`
-3. Runtime Postgres nos repositórios ainda pendente — produção atual usa SQLite + volume
+1. Crie projeto em [supabase.com](https://supabase.com) → **Settings → Database → Connection string (URI)**
+2. Execute `CONFIGURAR-SUPABASE.bat` ou:
+   ```bash
+   set DATABASE_URL=postgresql://...
+   npm run db:migrate:postgres
+   npm run db:migrate:sqlite-to-postgres   # opcional: copia dados do SQLite local
+   ```
+3. Railway: `railway variable set DATABASE_URL="..." --service web`
+4. Verifique: `/api/health` → `"databaseDriver":"postgres"`
+
+Sem `DATABASE_URL`, a API continua no SQLite (dev/local).
 
 #### Por que não Vercel?
 

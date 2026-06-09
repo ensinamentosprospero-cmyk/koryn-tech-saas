@@ -1,50 +1,56 @@
-import { getDatabase } from './database.js';
+import {
+  execute,
+  isPostgres,
+  parseJsonColumn,
+  queryOne,
+  sqlNow,
+} from './dbClient.js';
 import { normalizeUserData, normalizeUserEmail } from './userDataSchema.js';
 
-export function getUserData(tenantId, email, db = getDatabase()) {
+export async function getUserData(tenantId, email) {
   const normalizedEmail = normalizeUserEmail(email);
   if (!normalizedEmail) return normalizeUserData(null);
 
-  const row = db
-    .prepare('SELECT data_json FROM user_data WHERE tenant_id = ? AND email = ?')
-    .get(tenantId, normalizedEmail);
+  const row = await queryOne('SELECT data_json FROM user_data WHERE tenant_id = ? AND email = ?', [
+    tenantId,
+    normalizedEmail,
+  ]);
 
   if (!row) return normalizeUserData(null);
 
-  try {
-    return normalizeUserData(JSON.parse(row.data_json));
-  } catch {
-    return normalizeUserData(null);
-  }
+  return normalizeUserData(parseJsonColumn(row.data_json, null));
 }
 
-export function saveUserData(tenantId, email, data, db = getDatabase()) {
+export async function saveUserData(tenantId, email, data) {
   const normalizedEmail = normalizeUserEmail(email);
   if (!normalizedEmail) {
     return { error: 'E-mail inválido.' };
   }
 
   const normalized = normalizeUserData(data);
+  const dataJson = JSON.stringify(normalized);
+  const jsonCast = isPostgres() ? '?::jsonb' : '?';
 
-  db.prepare(
+  await execute(
     `INSERT INTO user_data (tenant_id, email, data_json, updated_at)
-     VALUES (?, ?, ?, datetime('now'))
+     VALUES (?, ?, ${jsonCast}, ${sqlNow()})
      ON CONFLICT(tenant_id, email) DO UPDATE SET
        data_json = excluded.data_json,
-       updated_at = datetime('now')`
-  ).run(tenantId, normalizedEmail, JSON.stringify(normalized));
+       updated_at = ${sqlNow()}`,
+    [tenantId, normalizedEmail, dataJson]
+  );
 
   return { data: normalized };
 }
 
-export function deleteUserData(tenantId, email, db = getDatabase()) {
+export async function deleteUserData(tenantId, email) {
   const normalizedEmail = normalizeUserEmail(email);
   if (!normalizedEmail) return { error: 'E-mail inválido.' };
 
-  db.prepare('DELETE FROM user_data WHERE tenant_id = ? AND email = ?').run(
+  await execute('DELETE FROM user_data WHERE tenant_id = ? AND email = ?', [
     tenantId,
-    normalizedEmail
-  );
+    normalizedEmail,
+  ]);
 
   return { ok: true };
 }

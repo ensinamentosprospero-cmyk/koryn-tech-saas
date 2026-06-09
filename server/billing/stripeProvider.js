@@ -74,7 +74,7 @@ export async function handleWebhook(requestBody, signatureHeader) {
     const planId = event.data?.object?.metadata?.plan_id;
 
     if (tenantId && planId) {
-      activateSubscription(tenantId, {
+      await activateSubscription(tenantId, {
         planId,
         status: SUBSCRIPTION_STATUSES.ACTIVE,
         provider: 'stripe',

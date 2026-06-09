@@ -60,10 +60,7 @@ export function validateProductionEnv() {
 
   if (env.databaseUrl) {
     console.log(
-      '[produção] DATABASE_URL detectada. Execute `npm run db:migrate:postgres` para criar tabelas no Supabase/Postgres.'
-    );
-    console.log(
-      '[produção] Runtime da API continua no SQLite local até migração completa dos repositórios.'
+      '[produção] DATABASE_URL detectada — runtime Postgres/Supabase ativo.'
     );
   }
 }

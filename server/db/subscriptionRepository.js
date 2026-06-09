@@ -1,4 +1,4 @@
-import { getDatabase } from './database.js';
+import { execute, fromActiveValue, fromPlanActiveValue, queryAll, queryOne, sqlNow, toActiveValue } from './dbClient.js';
 import {
   ACTIVE_SUBSCRIPTION_STATUSES,
   DEFAULT_TRIAL_DAYS,
@@ -35,7 +35,7 @@ function mapPlanRow(row) {
     currency: row.currency,
     interval: row.interval,
     stripePriceId: row.stripe_price_id,
-    active: row.active === 1,
+    active: fromPlanActiveValue(row.active),
   };
 }
 
@@ -72,69 +72,80 @@ function isPeriodValid(isoDate) {
   return new Date(isoDate).getTime() > Date.now();
 }
 
-export function seedSubscriptionPlans(db = getDatabase()) {
+export async function seedSubscriptionPlans() {
   for (const plan of DEFAULT_PLANS) {
-    db.prepare(
+    await execute(
       `INSERT INTO subscription_plans (id, name, price_cents, currency, interval, stripe_price_id, active)
-       VALUES (?, ?, ?, ?, ?, ?, 1)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON CONFLICT(id) DO UPDATE SET
          name = excluded.name,
          price_cents = excluded.price_cents,
          currency = excluded.currency,
          interval = excluded.interval,
          stripe_price_id = COALESCE(excluded.stripe_price_id, subscription_plans.stripe_price_id),
-         active = 1`
-    ).run(plan.id, plan.name, plan.price_cents, plan.currency, plan.interval, plan.stripe_price_id);
+         active = ?`,
+      [
+        plan.id,
+        plan.name,
+        plan.price_cents,
+        plan.currency,
+        plan.interval,
+        plan.stripe_price_id,
+        toActiveValue(true),
+        toActiveValue(true),
+      ]
+    );
   }
 }
 
-export function listSubscriptionPlans(db = getDatabase()) {
-  return db
-    .prepare(
-      `SELECT id, name, price_cents, currency, interval, stripe_price_id, active
-       FROM subscription_plans
-       WHERE active = 1
-       ORDER BY price_cents ASC`
-    )
-    .all()
-    .map(mapPlanRow);
+export async function listSubscriptionPlans() {
+  const rows = await queryAll(
+    `SELECT id, name, price_cents, currency, interval, stripe_price_id, active
+     FROM subscription_plans
+     WHERE active = ?
+     ORDER BY price_cents ASC`,
+    [toActiveValue(true)]
+  );
+
+  return rows.map(mapPlanRow);
 }
 
-export function getSubscriptionPlan(planId, db = getDatabase()) {
-  const row = db
-    .prepare(
-      `SELECT id, name, price_cents, currency, interval, stripe_price_id, active
-       FROM subscription_plans
-       WHERE id = ? AND active = 1`
-    )
-    .get(planId);
+export async function getSubscriptionPlan(planId) {
+  const row = await queryOne(
+    `SELECT id, name, price_cents, currency, interval, stripe_price_id, active
+     FROM subscription_plans
+     WHERE id = ? AND active = ?`,
+    [planId, toActiveValue(true)]
+  );
 
   return mapPlanRow(row);
 }
 
-export function getTenantSubscription(tenantId, db = getDatabase()) {
-  const row = db
-    .prepare(
-      `SELECT tenant_id, plan_id, status, provider, provider_subscription_id,
-              current_period_end, trial_ends_at, updated_at
-       FROM tenant_subscriptions
-       WHERE tenant_id = ?`
-    )
-    .get(tenantId);
+export async function getTenantSubscription(tenantId) {
+  const row = await queryOne(
+    `SELECT tenant_id, plan_id, status, provider, provider_subscription_id,
+            current_period_end, trial_ends_at, updated_at
+     FROM tenant_subscriptions
+     WHERE tenant_id = ?`,
+    [tenantId]
+  );
 
   if (!row) return null;
 
-  const planRow = db.prepare('SELECT id, name FROM subscription_plans WHERE id = ?').get(row.plan_id);
+  const planRow = await queryOne('SELECT id, name FROM subscription_plans WHERE id = ?', [
+    row.plan_id,
+  ]);
+
   return mapSubscriptionRow(row, planRow);
 }
 
-export function isTenantSubscriptionActive(tenantId, db = getDatabase()) {
+export async function isTenantSubscriptionActive(tenantId) {
   if (SUBSCRIPTION_EXEMPT_TENANT_IDS.includes(tenantId)) return true;
 
-  const tenant = db.prepare('SELECT active FROM tenants WHERE id = ?').get(tenantId);
-  if (!tenant || tenant.active !== 1) return false;
+  const tenant = await queryOne('SELECT active FROM tenants WHERE id = ?', [tenantId]);
+  if (!tenant || !fromActiveValue(tenant.active)) return false;
 
-  const subscription = getTenantSubscription(tenantId, db);
+  const subscription = await getTenantSubscription(tenantId);
   if (!subscription) return false;
 
   if (!ACTIVE_SUBSCRIPTION_STATUSES.includes(subscription.status)) {
@@ -148,42 +159,43 @@ export function isTenantSubscriptionActive(tenantId, db = getDatabase()) {
   return isPeriodValid(subscription.currentPeriodEnd);
 }
 
-export function ensureTenantSubscription(tenantId, db = getDatabase()) {
+export async function ensureTenantSubscription(tenantId) {
   if (SUBSCRIPTION_EXEMPT_TENANT_IDS.includes(tenantId)) return null;
 
-  const existing = getTenantSubscription(tenantId, db);
+  const existing = await getTenantSubscription(tenantId);
   if (existing) return existing;
 
-  return createTrialSubscription(tenantId, 'starter', db);
+  return createTrialSubscription(tenantId, 'starter');
 }
 
-export function createTrialSubscription(tenantId, planId = 'starter', db = getDatabase()) {
-  const plan = getSubscriptionPlan(planId, db);
+export async function createTrialSubscription(tenantId, planId = 'starter') {
+  const plan = await getSubscriptionPlan(planId);
   if (!plan) return { error: 'Plano não encontrado.' };
 
-  db.prepare(
+  await execute(
     `INSERT INTO tenant_subscriptions (
        tenant_id, plan_id, status, provider, trial_ends_at, updated_at
-     ) VALUES (?, ?, ?, 'manual', ?, datetime('now'))`
-  ).run(tenantId, planId, SUBSCRIPTION_STATUSES.TRIALING, addDays(DEFAULT_TRIAL_DAYS));
+     ) VALUES (?, ?, ?, 'manual', ?, ${sqlNow()})`,
+    [tenantId, planId, SUBSCRIPTION_STATUSES.TRIALING, addDays(DEFAULT_TRIAL_DAYS)]
+  );
 
-  return { subscription: getTenantSubscription(tenantId, db) };
+  return { subscription: await getTenantSubscription(tenantId) };
 }
 
-export function activateSubscription(tenantId, patch, db = getDatabase()) {
+export async function activateSubscription(tenantId, patch) {
   const planId = patch.planId || 'starter';
-  const plan = getSubscriptionPlan(planId, db);
+  const plan = await getSubscriptionPlan(planId);
   if (!plan) return { error: 'Plano não encontrado.' };
 
   const status = patch.status || SUBSCRIPTION_STATUSES.ACTIVE;
   const provider = patch.provider || 'manual';
   const currentPeriodEnd = patch.currentPeriodEnd || addMonths(1);
 
-  db.prepare(
+  await execute(
     `INSERT INTO tenant_subscriptions (
        tenant_id, plan_id, status, provider, provider_subscription_id,
        current_period_end, trial_ends_at, updated_at
-     ) VALUES (?, ?, ?, ?, ?, ?, NULL, datetime('now'))
+     ) VALUES (?, ?, ?, ?, ?, ?, NULL, ${sqlNow()})
      ON CONFLICT(tenant_id) DO UPDATE SET
        plan_id = excluded.plan_id,
        status = excluded.status,
@@ -191,27 +203,28 @@ export function activateSubscription(tenantId, patch, db = getDatabase()) {
        provider_subscription_id = excluded.provider_subscription_id,
        current_period_end = excluded.current_period_end,
        trial_ends_at = NULL,
-       updated_at = datetime('now')`
-  ).run(
-    tenantId,
-    planId,
-    status,
-    provider,
-    patch.providerSubscriptionId || null,
-    currentPeriodEnd
+       updated_at = ${sqlNow()}`,
+    [
+      tenantId,
+      planId,
+      status,
+      provider,
+      patch.providerSubscriptionId || null,
+      currentPeriodEnd,
+    ]
   );
 
-  return { subscription: getTenantSubscription(tenantId, db) };
+  return { subscription: await getTenantSubscription(tenantId) };
 }
 
-export function updateTenantSubscription(tenantId, patch, db = getDatabase()) {
-  const existing = getTenantSubscription(tenantId, db);
+export async function updateTenantSubscription(tenantId, patch) {
+  const existing = await getTenantSubscription(tenantId);
   if (!existing) {
-    return createTrialSubscription(tenantId, patch.planId || 'starter', db);
+    return createTrialSubscription(tenantId, patch.planId || 'starter');
   }
 
   const planId = patch.planId || existing.planId;
-  const plan = getSubscriptionPlan(planId, db);
+  const plan = await getSubscriptionPlan(planId);
   if (!plan) return { error: 'Plano não encontrado.' };
 
   const status = patch.status || existing.status;
@@ -228,35 +241,39 @@ export function updateTenantSubscription(tenantId, patch, db = getDatabase()) {
     trialEndsAt = null;
   }
 
-  db.prepare(
+  await execute(
     `UPDATE tenant_subscriptions
      SET plan_id = ?, status = ?, provider = ?, current_period_end = ?,
-         trial_ends_at = ?, updated_at = datetime('now')
-     WHERE tenant_id = ?`
-  ).run(planId, status, patch.provider || existing.provider, currentPeriodEnd, trialEndsAt, tenantId);
+         trial_ends_at = ?, updated_at = ${sqlNow()}
+     WHERE tenant_id = ?`,
+    [planId, status, patch.provider || existing.provider, currentPeriodEnd, trialEndsAt, tenantId]
+  );
 
-  return { subscription: getTenantSubscription(tenantId, db) };
+  return { subscription: await getTenantSubscription(tenantId) };
 }
 
-export function seedSubscriptionsForExistingTenants(db = getDatabase()) {
-  const tenants = db.prepare('SELECT id FROM tenants').all();
+export async function seedSubscriptionsForExistingTenants() {
+  const tenants = await queryAll('SELECT id FROM tenants');
 
   for (const tenant of tenants) {
     if (SUBSCRIPTION_EXEMPT_TENANT_IDS.includes(tenant.id)) continue;
-    ensureTenantSubscription(tenant.id, db);
+    await ensureTenantSubscription(tenant.id);
   }
 }
 
-export function listTenantsWithSubscriptions(db = getDatabase()) {
-  const tenants = db
-    .prepare('SELECT id, name, active FROM tenants ORDER BY id ASC')
-    .all();
+export async function listTenantsWithSubscriptions() {
+  const tenants = await queryAll('SELECT id, name, active FROM tenants ORDER BY id ASC');
 
-  return tenants.map((tenant) => ({
-    id: tenant.id,
-    name: tenant.name,
-    active: tenant.active === 1,
-    subscription: getTenantSubscription(tenant.id, db),
-    subscriptionActive: isTenantSubscriptionActive(tenant.id, db),
-  }));
+  const results = [];
+  for (const tenant of tenants) {
+    results.push({
+      id: tenant.id,
+      name: tenant.name,
+      active: fromPlanActiveValue(tenant.active),
+      subscription: await getTenantSubscription(tenant.id),
+      subscriptionActive: await isTenantSubscriptionActive(tenant.id),
+    });
+  }
+
+  return results;
 }

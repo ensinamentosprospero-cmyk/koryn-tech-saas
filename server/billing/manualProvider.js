@@ -2,7 +2,7 @@ import { SUBSCRIPTION_STATUSES } from './billingConstants.js';
 import { activateSubscription } from '../db/subscriptionRepository.js';
 
 export async function createCheckoutSession({ tenantId, planId }) {
-  const result = activateSubscription(tenantId, {
+  const result = await activateSubscription(tenantId, {
     planId,
     status: SUBSCRIPTION_STATUSES.ACTIVE,
     provider: 'manual',

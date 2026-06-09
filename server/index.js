@@ -65,8 +65,8 @@ async function readJsonBody(request) {
   return JSON.parse(raw);
 }
 
-function requireAuth(request, response, allowedRoles) {
-  const user = getUserFromRequest(request);
+async function requireAuth(request, response, allowedRoles) {
+  const user = await getUserFromRequest(request);
 
   if (!user) {
     sendJson(response, 401, { error: 'Autenticação necessária.' });
@@ -101,13 +101,13 @@ const server = http.createServer(async (request, response) => {
     if (url.pathname === '/api/billing/plans' && request.method === 'GET') {
       sendJson(response, 200, {
         provider: getBillingProviderName(),
-        plans: listSubscriptionPlans(),
+        plans: await listSubscriptionPlans(),
       });
       return;
     }
 
     if (url.pathname === '/api/billing/checkout' && request.method === 'POST') {
-      const user = requireAuth(request, response, [ROLES.TENANT_OWNER, ROLES.PLATFORM_ADMIN]);
+      const user = await requireAuth(request, response, [ROLES.TENANT_OWNER, ROLES.PLATFORM_ADMIN]);
       if (!user) return;
 
       const body = await readJsonBody(request);
@@ -119,7 +119,7 @@ const server = http.createServer(async (request, response) => {
         return;
       }
 
-      const plan = getSubscriptionPlan(planId);
+      const plan = await getSubscriptionPlan(planId);
       if (!plan) {
         sendJson(response, 400, { error: 'Plano não encontrado.' });
         return;
@@ -157,7 +157,7 @@ const server = http.createServer(async (request, response) => {
 
     if (url.pathname === '/api/auth/login' && request.method === 'POST') {
       const body = await readJsonBody(request);
-      const result = loginUser({
+      const result = await loginUser({
         email: body?.email,
         password: body?.password,
         tenantId: body?.tenantId,
@@ -175,7 +175,7 @@ const server = http.createServer(async (request, response) => {
 
     if (url.pathname === '/api/auth/register' && request.method === 'POST') {
       const body = await readJsonBody(request);
-      const result = registerUser({
+      const result = await registerUser({
         email: body?.email,
         password: body?.password,
         tenantId: body?.tenantId,
@@ -191,7 +191,7 @@ const server = http.createServer(async (request, response) => {
     }
 
     if (url.pathname === '/api/auth/me' && request.method === 'GET') {
-      const user = requireAuth(request, response);
+      const user = await requireAuth(request, response);
       if (!user) return;
 
       sendJson(response, 200, { user });
@@ -203,21 +203,23 @@ const server = http.createServer(async (request, response) => {
         const includeInactive = url.searchParams.get('all') === '1';
 
         if (includeInactive) {
-          const user = requireAuth(request, response, [ROLES.PLATFORM_ADMIN]);
+          const user = await requireAuth(request, response, [ROLES.PLATFORM_ADMIN]);
           if (!user) return;
         }
 
-        const tenants = includeInactive ? listTenantsWithSubscriptions() : listTenants();
+        const tenants = includeInactive
+          ? await listTenantsWithSubscriptions()
+          : await listTenants();
         sendJson(response, 200, { tenants });
         return;
       }
 
       if (request.method === 'POST') {
-        const user = requireAuth(request, response, [ROLES.PLATFORM_ADMIN]);
+        const user = await requireAuth(request, response, [ROLES.PLATFORM_ADMIN]);
         if (!user) return;
 
         const body = await readJsonBody(request);
-        const result = createTenant({
+        const result = await createTenant({
           id: body?.id,
           name: body?.name,
         });
@@ -234,12 +236,12 @@ const server = http.createServer(async (request, response) => {
 
     const tenantMatch = url.pathname.match(/^\/api\/tenants\/([^/]+)$/);
     if (tenantMatch && request.method === 'PATCH') {
-      const user = requireAuth(request, response, [ROLES.PLATFORM_ADMIN]);
+      const user = await requireAuth(request, response, [ROLES.PLATFORM_ADMIN]);
       if (!user) return;
 
       const tenantId = decodeURIComponent(tenantMatch[1]);
       const body = await readJsonBody(request);
-      const result = updateTenant(tenantId, {
+      const result = await updateTenant(tenantId, {
         name: body?.name,
         active: body?.active,
       });
@@ -259,27 +261,27 @@ const server = http.createServer(async (request, response) => {
       const tenantId = decodeURIComponent(subscriptionMatch[1]);
 
       if (request.method === 'GET') {
-        const user = getUserFromRequest(request);
+        const user = await getUserFromRequest(request);
         if (!canManageTenant(user, tenantId) && !hasRole(user, [ROLES.PLATFORM_ADMIN])) {
           sendJson(response, 401, { error: 'Autenticação necessária.' });
           return;
         }
 
-        const subscription = getTenantSubscription(tenantId);
+        const subscription = await getTenantSubscription(tenantId);
         sendJson(response, 200, {
           tenantId,
           subscription,
-          subscriptionActive: isTenantSubscriptionActive(tenantId),
+          subscriptionActive: await isTenantSubscriptionActive(tenantId),
         });
         return;
       }
 
       if (request.method === 'PATCH') {
-        const user = requireAuth(request, response, [ROLES.PLATFORM_ADMIN]);
+        const user = await requireAuth(request, response, [ROLES.PLATFORM_ADMIN]);
         if (!user) return;
 
         const body = await readJsonBody(request);
-        const result = updateTenantSubscription(tenantId, {
+        const result = await updateTenantSubscription(tenantId, {
           planId: body?.planId,
           status: body?.status,
           provider: body?.provider,
@@ -295,7 +297,7 @@ const server = http.createServer(async (request, response) => {
         sendJson(response, 200, {
           tenantId,
           subscription: result.subscription,
-          subscriptionActive: isTenantSubscriptionActive(tenantId),
+          subscriptionActive: await isTenantSubscriptionActive(tenantId),
         });
         return;
       }
@@ -304,7 +306,7 @@ const server = http.createServer(async (request, response) => {
     const userDataMatch = url.pathname.match(/^\/api\/tenants\/([^/]+)\/user-data$/);
     if (userDataMatch) {
       const tenantId = decodeURIComponent(userDataMatch[1]);
-      const user = getUserFromRequest(request);
+      const user = await getUserFromRequest(request);
 
       if (!canAccessUserData(user, tenantId)) {
         sendJson(response, 401, { error: 'Autenticação necessária.' });
@@ -312,7 +314,7 @@ const server = http.createServer(async (request, response) => {
       }
 
       if (request.method === 'GET') {
-        const data = getUserData(tenantId, user.email);
+        const data = await getUserData(tenantId, user.email);
         sendJson(response, 200, { tenantId, email: user.email, data });
         return;
       }
@@ -320,7 +322,7 @@ const server = http.createServer(async (request, response) => {
       if (request.method === 'PUT') {
         const body = await readJsonBody(request);
         const payload = body?.data ?? body;
-        const result = saveUserDataRecord(tenantId, user.email, payload);
+        const result = await saveUserDataRecord(tenantId, user.email, payload);
 
         if (result.error) {
           sendJson(response, 400, { error: result.error });
@@ -340,25 +342,25 @@ const server = http.createServer(async (request, response) => {
     if (configMatch) {
       const tenantId = decodeURIComponent(configMatch[1]);
 
-      if (!isTenantSubscriptionActive(tenantId)) {
+      if (!(await isTenantSubscriptionActive(tenantId))) {
         sendJson(response, 403, {
           error: 'Assinatura inativa. A loja está temporariamente indisponível.',
           code: 'SUBSCRIPTION_INACTIVE',
           tenantId,
-          subscription: getTenantSubscription(tenantId),
+          subscription: await getTenantSubscription(tenantId),
         });
         return;
       }
 
-      const tenants = listTenants();
+      const tenants = await listTenants();
 
-      if (!isKnownTenant(tenantId, tenants)) {
+      if (!(await isKnownTenant(tenantId, tenants))) {
         sendJson(response, 404, { error: 'Tenant não encontrado.' });
         return;
       }
 
       if (request.method === 'GET') {
-        const config = readTenantConfig(tenantId);
+        const config = await readTenantConfig(tenantId);
         if (!config) {
           sendJson(response, 404, { error: 'Configuração não encontrada.' });
           return;
@@ -369,7 +371,7 @@ const server = http.createServer(async (request, response) => {
       }
 
       if (request.method === 'PUT') {
-        const user = getUserFromRequest(request);
+        const user = await getUserFromRequest(request);
         if (!canManageTenant(user, tenantId)) {
           sendJson(response, 401, { error: 'Autenticação necessária para salvar configuração.' });
           return;
@@ -383,7 +385,7 @@ const server = http.createServer(async (request, response) => {
           return;
         }
 
-        const saved = writeTenantConfig(tenantId, config);
+        const saved = await writeTenantConfig(tenantId, config);
         sendJson(response, 200, { tenantId, config: saved });
         return;
       }
@@ -406,9 +408,12 @@ const server = http.createServer(async (request, response) => {
 await bootstrapTenantStore();
 
 server.listen(env.port, () => {
+  const driver = getDatabaseDriver();
+  const dbLabel = driver === 'postgres' ? 'Supabase/Postgres' : env.storeDbPath;
+
   console.log(`Koryn Tech SaaS rodando em http://localhost:${env.port}`);
   console.log(`Ambiente: ${env.nodeEnv}`);
-  console.log(`Banco runtime: ${getDatabaseDriver()} (${env.storeDbPath})`);
+  console.log(`Banco runtime: ${driver} (${dbLabel})`);
 
   if (canServeStatic()) {
     console.log(`Frontend estático: ${getDistDir()}`);

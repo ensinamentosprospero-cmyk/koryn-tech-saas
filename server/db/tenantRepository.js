@@ -2,7 +2,17 @@ import { readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getDatabase } from './database.js';
+import {
+  ensurePostgresSchema,
+  execute,
+  fromActiveValue,
+  isPostgres,
+  parseJsonColumn,
+  queryAll,
+  queryOne,
+  sqlNow,
+  toActiveValue,
+} from './dbClient.js';
 import { DEFAULT_TENANTS, createBootstrapConfig } from './tenantDefaults.js';
 import { syncUsersFromTenantConfigs } from './userRepository.js';
 import {
@@ -16,48 +26,55 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LEGACY_DATA_DIR = path.join(__dirname, '..', 'data', 'tenants');
 const LEGACY_REGISTRY_PATH = path.join(LEGACY_DATA_DIR, 'registry.json');
 
-function upsertTenant(db, tenant) {
-  db.prepare(
+async function upsertTenant(tenant) {
+  await execute(
     `INSERT INTO tenants (id, name, active, updated_at)
-     VALUES (?, ?, ?, datetime('now'))
+     VALUES (?, ?, ?, ${sqlNow()})
      ON CONFLICT(id) DO UPDATE SET
        name = excluded.name,
        active = excluded.active,
-       updated_at = datetime('now')`
-  ).run(tenant.id, tenant.name, tenant.active === false ? 0 : 1);
+       updated_at = ${sqlNow()}`,
+    [tenant.id, tenant.name, toActiveValue(tenant.active !== false)]
+  );
 }
 
-function upsertTenantConfig(db, tenantId, config) {
-  db.prepare(
+async function upsertTenantConfig(tenantId, config) {
+  const configJson = JSON.stringify(config);
+  const jsonCast = isPostgres() ? '?::jsonb' : '?';
+
+  await execute(
     `INSERT INTO tenant_configs (tenant_id, config_json, updated_at)
-     VALUES (?, ?, datetime('now'))
+     VALUES (?, ${jsonCast}, ${sqlNow()})
      ON CONFLICT(tenant_id) DO UPDATE SET
        config_json = excluded.config_json,
-       updated_at = datetime('now')`
-  ).run(tenantId, JSON.stringify(config));
+       updated_at = ${sqlNow()}`,
+    [tenantId, configJson]
+  );
 }
 
-export function seedDefaultTenants(db = getDatabase()) {
+export async function seedDefaultTenants() {
   for (const tenant of DEFAULT_TENANTS) {
-    upsertTenant(db, tenant);
+    await upsertTenant(tenant);
 
-    const existing = db
-      .prepare('SELECT tenant_id FROM tenant_configs WHERE tenant_id = ?')
-      .get(tenant.id);
+    const existing = await queryOne('SELECT tenant_id FROM tenant_configs WHERE tenant_id = ?', [
+      tenant.id,
+    ]);
 
     if (!existing) {
-      upsertTenantConfig(db, tenant.id, createBootstrapConfig(tenant.id));
+      await upsertTenantConfig(tenant.id, createBootstrapConfig(tenant.id));
     }
   }
 }
 
-export async function migrateLegacyJsonStore(db = getDatabase()) {
+export async function migrateLegacyJsonStore() {
   if (!existsSync(LEGACY_REGISTRY_PATH)) {
-    seedDefaultTenants(db);
+    await seedDefaultTenants();
     return { migrated: false, reason: 'no-legacy-json' };
   }
 
-  const tenantCount = db.prepare('SELECT COUNT(*) AS total FROM tenants').get().total;
+  const tenantCountRow = await queryOne('SELECT COUNT(*) AS total FROM tenants');
+  const tenantCount = Number(tenantCountRow?.total || 0);
+
   if (tenantCount > 0) {
     return { migrated: false, reason: 'database-already-populated' };
   }
@@ -67,7 +84,7 @@ export async function migrateLegacyJsonStore(db = getDatabase()) {
   const tenants = Array.isArray(registry.tenants) ? registry.tenants : DEFAULT_TENANTS;
 
   for (const tenant of tenants) {
-    upsertTenant(db, tenant);
+    await upsertTenant(tenant);
 
     const legacyConfigPath = path.join(LEGACY_DATA_DIR, `${tenant.id}.json`);
     let config = createBootstrapConfig(tenant.id);
@@ -77,7 +94,7 @@ export async function migrateLegacyJsonStore(db = getDatabase()) {
       config = JSON.parse(legacyRaw);
     }
 
-    upsertTenantConfig(db, tenant.id, config);
+    await upsertTenantConfig(tenant.id, config);
   }
 
   return { migrated: true, tenants: tenants.length };
@@ -87,28 +104,35 @@ function mapTenantRow(row) {
   return {
     id: row.id,
     name: row.name,
-    active: row.active === 1,
+    active: fromActiveValue(row.active),
   };
 }
 
-export function listTenants(db = getDatabase()) {
-  return db
-    .prepare('SELECT id, name, active FROM tenants WHERE active = 1 ORDER BY id ASC')
-    .all()
-    .map(mapTenantRow)
-    .filter((tenant) => isTenantSubscriptionActive(tenant.id, db));
+export async function listTenants() {
+  const rows = await queryAll(
+    `SELECT id, name, active FROM tenants WHERE active = ? ORDER BY id ASC`,
+    [toActiveValue(true)]
+  );
+
+  const tenants = [];
+  for (const row of rows) {
+    const tenant = mapTenantRow(row);
+    if (await isTenantSubscriptionActive(tenant.id)) {
+      tenants.push(tenant);
+    }
+  }
+
+  return tenants;
 }
 
-export function listAllTenants(db = getDatabase()) {
-  return db
-    .prepare('SELECT id, name, active FROM tenants ORDER BY id ASC')
-    .all()
-    .map(mapTenantRow);
+export async function listAllTenants() {
+  const rows = await queryAll('SELECT id, name, active FROM tenants ORDER BY id ASC');
+  return rows.map(mapTenantRow);
 }
 
 const TENANT_ID_PATTERN = /^[a-z0-9][a-z0-9-]{1,30}[a-z0-9]$/;
 
-export function createTenant({ id, name }, db = getDatabase()) {
+export async function createTenant({ id, name }) {
   const tenantId = String(id || '')
     .trim()
     .toLowerCase();
@@ -122,64 +146,64 @@ export function createTenant({ id, name }, db = getDatabase()) {
     return { error: 'Nome da loja é obrigatório.' };
   }
 
-  const existing = db.prepare('SELECT id FROM tenants WHERE id = ?').get(tenantId);
+  const existing = await queryOne('SELECT id FROM tenants WHERE id = ?', [tenantId]);
   if (existing) {
     return { error: 'Já existe uma loja com este ID.' };
   }
 
-  upsertTenant(db, { id: tenantId, name: tenantName, active: true });
-  upsertTenantConfig(db, tenantId, createBootstrapConfig(tenantId, tenantName));
-  ensureTenantSubscription(tenantId, db);
+  await upsertTenant({ id: tenantId, name: tenantName, active: true });
+  await upsertTenantConfig(tenantId, createBootstrapConfig(tenantId, tenantName));
+  await ensureTenantSubscription(tenantId);
 
-  return { tenant: mapTenantRow(db.prepare('SELECT id, name, active FROM tenants WHERE id = ?').get(tenantId)) };
+  const row = await queryOne('SELECT id, name, active FROM tenants WHERE id = ?', [tenantId]);
+  return { tenant: mapTenantRow(row) };
 }
 
-export function updateTenant(tenantId, patch, db = getDatabase()) {
-  const row = db.prepare('SELECT id, name, active FROM tenants WHERE id = ?').get(tenantId);
+export async function updateTenant(tenantId, patch) {
+  const row = await queryOne('SELECT id, name, active FROM tenants WHERE id = ?', [tenantId]);
   if (!row) {
     return { error: 'Tenant não encontrado.' };
   }
 
   const nextName = patch.name !== undefined ? String(patch.name).trim() : row.name;
-  const nextActive = patch.active !== undefined ? (patch.active ? 1 : 0) : row.active;
+  const nextActive =
+    patch.active !== undefined ? toActiveValue(patch.active) : toActiveValue(fromActiveValue(row.active));
 
   if (!nextName) {
     return { error: 'Nome da loja é obrigatório.' };
   }
 
-  db.prepare(
+  await execute(
     `UPDATE tenants
-     SET name = ?, active = ?, updated_at = datetime('now')
-     WHERE id = ?`
-  ).run(nextName, nextActive, tenantId);
+     SET name = ?, active = ?, updated_at = ${sqlNow()}
+     WHERE id = ?`,
+    [nextName, nextActive, tenantId]
+  );
 
-  return {
-    tenant: mapTenantRow(
-      db.prepare('SELECT id, name, active FROM tenants WHERE id = ?').get(tenantId)
-    ),
-  };
+  const updated = await queryOne('SELECT id, name, active FROM tenants WHERE id = ?', [tenantId]);
+  return { tenant: mapTenantRow(updated) };
 }
 
-export function readTenantConfig(tenantId, db = getDatabase()) {
-  const row = db
-    .prepare('SELECT config_json FROM tenant_configs WHERE tenant_id = ?')
-    .get(tenantId);
+export async function readTenantConfig(tenantId) {
+  const row = await queryOne('SELECT config_json FROM tenant_configs WHERE tenant_id = ?', [
+    tenantId,
+  ]);
 
   if (!row) return null;
 
-  return JSON.parse(row.config_json);
+  return parseJsonColumn(row.config_json);
 }
 
-export function writeTenantConfig(tenantId, config, db = getDatabase()) {
-  const tenant = db.prepare('SELECT id FROM tenants WHERE id = ?').get(tenantId);
+export async function writeTenantConfig(tenantId, config) {
+  const tenant = await queryOne('SELECT id FROM tenants WHERE id = ?', [tenantId]);
   if (!tenant) return null;
 
-  upsertTenantConfig(db, tenantId, config);
+  await upsertTenantConfig(tenantId, config);
   return config;
 }
 
-export function isKnownTenant(tenantId, registry, db = getDatabase()) {
-  if (!isTenantSubscriptionActive(tenantId, db)) {
+export async function isKnownTenant(tenantId, registry) {
+  if (!(await isTenantSubscriptionActive(tenantId))) {
     return false;
   }
 
@@ -187,24 +211,25 @@ export function isKnownTenant(tenantId, registry, db = getDatabase()) {
     return registry.some((tenant) => tenant.id === tenantId);
   }
 
-  const row = db
-    .prepare('SELECT id FROM tenants WHERE id = ? AND active = 1')
-    .get(tenantId);
-
+  const row = await queryOne('SELECT id FROM tenants WHERE id = ? AND active = ?', [
+    tenantId,
+    toActiveValue(true),
+  ]);
   return Boolean(row);
 }
 
 export async function bootstrapDatabase() {
-  const db = getDatabase();
-  const migration = await migrateLegacyJsonStore(db);
+  await ensurePostgresSchema();
+
+  const migration = await migrateLegacyJsonStore();
 
   if (!migration.migrated && migration.reason === 'no-legacy-json') {
-    seedDefaultTenants(db);
+    await seedDefaultTenants();
   }
 
-  await syncUsersFromTenantConfigs(db);
-  seedSubscriptionPlans(db);
-  seedSubscriptionsForExistingTenants(db);
+  await syncUsersFromTenantConfigs();
+  await seedSubscriptionPlans();
+  await seedSubscriptionsForExistingTenants();
 
   return migration;
 }

@@ -7,14 +7,14 @@ import {
   registerVisitor,
 } from '../db/userRepository.js';
 
-export function loginUser({ email, password, tenantId, scope }) {
+export async function loginUser({ email, password, tenantId, scope }) {
   const resolvedTenantId = scope === 'platform' ? PLATFORM_TENANT_ID : tenantId;
 
   if (!resolvedTenantId) {
     return { error: 'Tenant é obrigatório.' };
   }
 
-  const user = authenticateUser(email, password, resolvedTenantId);
+  const user = await authenticateUser(email, password, resolvedTenantId);
   if (!user) {
     return { error: 'E-mail ou senha incorretos.' };
   }
@@ -29,12 +29,12 @@ export function loginUser({ email, password, tenantId, scope }) {
   return { token, user };
 }
 
-export function registerUser({ email, password, tenantId }) {
+export async function registerUser({ email, password, tenantId }) {
   if (!tenantId || tenantId === PLATFORM_TENANT_ID) {
     return { error: 'Registro disponível apenas para lojas.' };
   }
 
-  const result = registerVisitor(email, password, tenantId);
+  const result = await registerVisitor(email, password, tenantId);
   if (result.error) return result;
 
   const token = createAccessToken({
@@ -47,7 +47,7 @@ export function registerUser({ email, password, tenantId }) {
   return { token, user: result.user };
 }
 
-export function getUserFromRequest(request) {
+export async function getUserFromRequest(request) {
   const authorization = request.headers.authorization || request.headers.Authorization;
   if (!authorization || !authorization.startsWith('Bearer ')) return null;
 
@@ -55,7 +55,7 @@ export function getUserFromRequest(request) {
   const payload = verifyAccessToken(token);
   if (!payload?.sub) return null;
 
-  const user = findUserById(payload.sub);
+  const user = await findUserById(payload.sub);
   if (!user) return null;
 
   return user;

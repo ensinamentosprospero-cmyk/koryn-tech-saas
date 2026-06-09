@@ -15,7 +15,8 @@
     "start": "node server/index.js",
     "start:prod": "node server/index.js",
     "build:prod": "npm run build && npm run start:prod",
-    "db:migrate:postgres": "node scripts/migrate-postgres.mjs"
+    "db:migrate:postgres": "node scripts/migrate-postgres.mjs",
+    "db:migrate:sqlite-to-postgres": "node scripts/migrate-sqlite-to-postgres.mjs"
   },
   "dependencies": {
     "pg": "^8.16.0",
