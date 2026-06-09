@@ -54,17 +54,14 @@ Sistema SaaS multi-tenant para lojistas de eletrônicos personalizarem sua loja 
 | **URL pública** | https://web-production-b5f0a.up.railway.app |
 | **Health** | https://web-production-b5f0a.up.railway.app/api/health |
 | **Conta Railway** | conceicaorodney56@gmail.com |
-| **Volume SQLite** | `/app/server/data` → `web-volume` |
+| **Volume SQLite** | `/app/server/data` → `web-volume` (legado; com Supabase nao e mais obrigatorio) |
+| **Supabase** | Projeto `iisvuhfkekzyqnrzvqxb` — https://iisvuhfkekzyqnrzvqxb.supabase.co |
+| **Banco runtime** | Postgres via `DATABASE_URL` (Railway configurado) |
 
 Variáveis já configuradas: `NODE_ENV`, `SERVE_STATIC`, `JWT_SECRET`, `APP_BASE_URL`, `VITE_TENANT_BASE_DOMAINS`, `STORE_DB_PATH`, `BILLING_PROVIDER=manual`.
 
 **Próximos passos opcionais:**
-1. **Supabase (Postgres)** — runtime pronto; falta só conectar:
-   - Script: `CONFIGURAR-SUPABASE.bat`
-   - Schema: `npm run db:migrate:postgres`
-   - Migrar dados SQLite: `npm run db:migrate:sqlite-to-postgres`
-   - Railway: `railway variable set DATABASE_URL="..." --service web`
-   - Health deve retornar `"databaseDriver":"postgres"`
+1. **Supabase** — conectado (`DATABASE_URL` no Railway + schema migrado). Dashboard: https://supabase.com/dashboard/project/iisvuhfkekzyqnrzvqxb
 2. **Domínio custom** — adiado; script `CONFIGURAR-DOMINIO.bat`
 3. Stripe live (`BILLING_PROVIDER=stripe` + chaves)
 4. Nginx/Caddy na VPS com HTTPS (alternativa ao Railway)
