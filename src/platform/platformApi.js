@@ -75,3 +75,11 @@ export async function fetchBillingPlans() {
 
   return parseJsonResponse(response);
 }
+
+export async function fetchPlatformHealth() {
+  const response = await fetch(buildApiUrl('/health'), {
+    headers: { Accept: 'application/json' },
+  });
+
+  return parseJsonResponse(response);
+}

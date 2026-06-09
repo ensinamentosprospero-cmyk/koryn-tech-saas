@@ -262,14 +262,22 @@ export async function seedSubscriptionsForExistingTenants() {
 }
 
 export async function listTenantsWithSubscriptions() {
-  const tenants = await queryAll('SELECT id, name, active FROM tenants ORDER BY id ASC');
+  const rows = await queryAll(
+    `SELECT t.id, t.name, t.active, t.created_at, t.updated_at, u.email AS owner_email
+     FROM tenants t
+     LEFT JOIN users u ON u.tenant_id = t.id AND u.role = 'tenant_owner'
+     ORDER BY t.created_at DESC, t.id ASC`
+  );
 
   const results = [];
-  for (const tenant of tenants) {
+  for (const tenant of rows) {
     results.push({
       id: tenant.id,
       name: tenant.name,
-      active: fromPlanActiveValue(tenant.active),
+      active: fromActiveValue(tenant.active),
+      ownerEmail: tenant.owner_email || null,
+      createdAt: tenant.created_at || null,
+      updatedAt: tenant.updated_at || null,
       subscription: await getTenantSubscription(tenant.id),
       subscriptionActive: await isTenantSubscriptionActive(tenant.id),
     });

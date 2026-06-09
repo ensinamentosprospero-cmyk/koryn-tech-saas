@@ -63,13 +63,15 @@ Variáveis já configuradas: `NODE_ENV`, `SERVE_STATIC`, `JWT_SECRET`, `APP_BASE
 
 **Próximo passo prioritário:**
 1. **Onboarding + billing lojista** — ✅ criar loja com dono/senha/trial; painel admin → Assinatura
-2. **Aprimoramentos SaaS** — categorias configuráveis, upload imagens, dashboard plataforma (opcional)
+2. **Dashboard plataforma** — ✅ visão geral, métricas, filtros, drawer de detalhes
+3. **Aprimoramentos SaaS** — categorias configuráveis, upload imagens (opcional)
 
 **Concluído recentemente:**
 - Supabase dedicado `qjynmumyoypzvqdaznnn` + Railway
 - Onboarding: e-mail dono, senha gerada, credenciais na plataforma
 - Billing lojista: trial, planos Starter/Pro, checkout manual/Stripe
-1. **Domínio custom** — adiado; script `CONFIGURAR-DOMINIO.bat`
+- Painel plataforma: sidebar (Visão geral / Lojas / Nova loja), stats MRR/trial, busca/filtros, drawer com assinatura e ações
+- URLs Railway: `/loja/id` (fix SSL subdomínio)
 3. Stripe live (`BILLING_PROVIDER=stripe` + chaves)
 4. Nginx/Caddy na VPS com HTTPS (alternativa ao Railway)
 5. **Não** alterar layout da loja pública
@@ -290,8 +292,13 @@ Este projeto usa **um servidor Node único** (API + SQLite + arquivos estáticos
 | URL | http://localhost:5173/platform |
 | Login | `admin@koryntech.com` / `korynadmin` via `POST /api/auth/login` (`scope: platform`) |
 | Token | `sessionStorage` → `koryn-tech-platform-auth-token` |
-| Frontend | `src/platform/PlatformApp.jsx`, `platformApi.js`, `platformAuth.js` |
+| Frontend | `src/platform/` — `PlatformApp.jsx`, shell, overview, lojas, onboarding |
 | Roteamento | `main.jsx` detecta `pathname.startsWith('/platform')` — **não** carrega providers da loja |
+
+**Seções do painel:**
+- **Visão geral** — total de lojas, trials, MRR estimado, trials expirando, status da API
+- **Lojas** — busca, filtros (ativa/trial/bloqueada), tabela e drawer de detalhes
+- **Nova loja** — formulário de onboarding com credenciais geradas
 
 **Rotas protegidas:** `POST/PATCH /api/tenants`, `GET /api/tenants?all=1` → `platform_admin`; `PUT .../config` → dono da loja ou plataforma.
 
@@ -399,4 +406,4 @@ TenantProvider
 
 ---
 
-*Última atualização: FASE 4 concluída — roadmap SaaS multi-tenant completo para dev/produção local.*
+*Última atualização: dashboard plataforma aprimorado — métricas, filtros e drawer de lojas.*
