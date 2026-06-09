@@ -59,7 +59,10 @@ Sistema SaaS multi-tenant para lojistas de eletrônicos personalizarem sua loja 
 Variáveis já configuradas: `NODE_ENV`, `SERVE_STATIC`, `JWT_SECRET`, `APP_BASE_URL`, `VITE_TENANT_BASE_DOMAINS`, `STORE_DB_PATH`, `BILLING_PROVIDER=manual`.
 
 **Próximos passos opcionais:**
-1. Domínio custom + DNS wildcard (`*.seudominio.com`) no Railway
+1. **Domínio custom `koryntech.com`** — script `CONFIGURAR-DOMINIO.bat` + DNS no provedor:
+   - Railway → serviço `web` → Settings → Networking → adicionar `koryntech.com` e `*.koryntech.com`
+   - DNS: `CNAME @` e `CNAME *` → `web-production-b5f0a.up.railway.app` (+ TXT/`_acme-challenge` do Railway)
+   - Variáveis já preparadas: `VITE_TENANT_BASE_DOMAINS=koryntech.com,web-production-b5f0a.up.railway.app`
 2. Stripe live (`BILLING_PROVIDER=stripe` + chaves)
 3. **Supabase runtime** — migrar repositórios de SQLite para Postgres
 4. Nginx/Caddy na VPS com HTTPS (alternativa ao Railway)
