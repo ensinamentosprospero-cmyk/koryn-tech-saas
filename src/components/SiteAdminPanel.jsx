@@ -3,6 +3,7 @@ import { useSiteConfig } from '../context/SiteConfigContext';
 import Icon from './Icon';
 import { ADMIN_MOBILE_NAV, ADMIN_NAV, ADMIN_PAGES } from './admin/adminNav';
 import AdminDashboard from './admin/AdminDashboard';
+import AdminBillingSettings from './admin/AdminBillingSettings';
 import AdminProductsEditor from './admin/AdminProductsEditor';
 import { AdminFaqEditor, AdminOffersEditor } from './admin/AdminCatalogEditors';
 import {
@@ -117,6 +118,8 @@ function renderPage(page, onNavigate) {
   switch (page) {
     case 'dashboard':
       return <AdminDashboard onNavigate={onNavigate} />;
+    case 'assinatura':
+      return <AdminBillingSettings />;
     case 'loja':
       return <AdminStoreSettings />;
     case 'contato':

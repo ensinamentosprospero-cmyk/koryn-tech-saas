@@ -32,6 +32,7 @@ export default function AdminDashboard({ onNavigate }) {
   const quickLinks = [
     { id: 'produtos', label: 'Editar produtos', icon: 'tag' },
     { id: 'ofertas', label: 'Editar ofertas', icon: 'star' },
+    { id: 'assinatura', label: 'Assinatura', icon: 'star' },
     { id: 'contato', label: 'Atualizar contato', icon: 'whatsapp' },
     { id: 'secoes', label: 'Seções visíveis', icon: 'check' },
   ];

@@ -14,13 +14,15 @@ import {
   toActiveValue,
 } from './dbClient.js';
 import { DEFAULT_TENANTS, createBootstrapConfig } from './tenantDefaults.js';
-import { syncUsersFromTenantConfigs } from './userRepository.js';
+import { createUser, ROLES, syncUsersFromTenantConfigs } from './userRepository.js';
 import {
   ensureTenantSubscription,
+  getTenantSubscription,
   isTenantSubscriptionActive,
   seedSubscriptionPlans,
   seedSubscriptionsForExistingTenants,
 } from './subscriptionRepository.js';
+import { generateOwnerPassword } from '../utils/generatePassword.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LEGACY_DATA_DIR = path.join(__dirname, '..', 'data', 'tenants');
@@ -131,12 +133,16 @@ export async function listAllTenants() {
 }
 
 const TENANT_ID_PATTERN = /^[a-z0-9][a-z0-9-]{1,30}[a-z0-9]$/;
+const OWNER_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export async function createTenant({ id, name }) {
+export async function createTenant({ id, name, ownerEmail, ownerPassword }) {
   const tenantId = String(id || '')
     .trim()
     .toLowerCase();
   const tenantName = String(name || '').trim();
+  const email = String(ownerEmail || '')
+    .trim()
+    .toLowerCase();
 
   if (!TENANT_ID_PATTERN.test(tenantId)) {
     return { error: 'ID inválido. Use 3–32 caracteres: letras minúsculas, números e hífen.' };
@@ -146,17 +152,55 @@ export async function createTenant({ id, name }) {
     return { error: 'Nome da loja é obrigatório.' };
   }
 
+  if (!OWNER_EMAIL_PATTERN.test(email)) {
+    return { error: 'E-mail do dono da loja é obrigatório e deve ser válido.' };
+  }
+
   const existing = await queryOne('SELECT id FROM tenants WHERE id = ?', [tenantId]);
   if (existing) {
     return { error: 'Já existe uma loja com este ID.' };
   }
 
+  const generatedPassword = !String(ownerPassword || '').trim();
+  const password = generatedPassword ? generateOwnerPassword() : String(ownerPassword).trim();
+
+  const config = createBootstrapConfig(tenantId, tenantName);
+  config.auth = {
+    adminEmail: email,
+    adminPassword: password,
+    userEmail: 'cliente@koryntech.com',
+    userPassword: 'cliente123',
+  };
+
   await upsertTenant({ id: tenantId, name: tenantName, active: true });
-  await upsertTenantConfig(tenantId, createBootstrapConfig(tenantId, tenantName));
+  await upsertTenantConfig(tenantId, config);
   await ensureTenantSubscription(tenantId);
 
+  const userResult = await createUser({
+    email,
+    password,
+    role: ROLES.TENANT_OWNER,
+    tenantId,
+  });
+
+  if (userResult.error) {
+    return { error: userResult.error };
+  }
+
   const row = await queryOne('SELECT id, name, active FROM tenants WHERE id = ?', [tenantId]);
-  return { tenant: mapTenantRow(row) };
+  const subscription = await getTenantSubscription(tenantId);
+
+  return {
+    tenant: mapTenantRow(row),
+    onboarding: {
+      ownerEmail: email,
+      ownerPassword: password,
+      passwordGenerated: generatedPassword,
+      trialEndsAt: subscription?.trialEndsAt || null,
+      planId: subscription?.planId || 'starter',
+      planName: subscription?.planName || 'Starter',
+    },
+  };
 }
 
 export async function updateTenant(tenantId, patch) {

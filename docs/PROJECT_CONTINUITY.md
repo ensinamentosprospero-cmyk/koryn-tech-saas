@@ -55,14 +55,21 @@ Sistema SaaS multi-tenant para lojistas de eletrônicos personalizarem sua loja 
 | **Health** | https://web-production-b5f0a.up.railway.app/api/health |
 | **Conta Railway** | conceicaorodney56@gmail.com |
 | **Volume SQLite** | `/app/server/data` → `web-volume` (legado; com Supabase nao e mais obrigatorio) |
-| **Supabase** | Projeto `iisvuhfkekzyqnrzvqxb` — https://iisvuhfkekzyqnrzvqxb.supabase.co |
-| **Banco runtime** | Postgres via `DATABASE_URL` (Railway configurado) |
+| **Supabase (atual)** | Projeto dedicado `qjynmumyoypzvqdaznnn` — https://qjynmumyoypzvqdaznnn.supabase.co |
+| **Supabase (legado)** | Projeto compartilhado `iisvuhfkekzyqnrzvqxb` (lista-mercado) — dados migrados |
+| **Banco runtime** | Postgres via `DATABASE_URL` (Railway → projeto dedicado) |
 
 Variáveis já configuradas: `NODE_ENV`, `SERVE_STATIC`, `JWT_SECRET`, `APP_BASE_URL`, `VITE_TENANT_BASE_DOMAINS`, `STORE_DB_PATH`, `BILLING_PROVIDER=manual`.
 
-**Próximos passos opcionais:**
-1. **Supabase** — conectado (`DATABASE_URL` no Railway + schema migrado). Dashboard: https://supabase.com/dashboard/project/iisvuhfkekzyqnrzvqxb
-2. **Domínio custom** — adiado; script `CONFIGURAR-DOMINIO.bat`
+**Próximo passo prioritário:**
+1. **Onboarding + billing lojista** — ✅ criar loja com dono/senha/trial; painel admin → Assinatura
+2. **Aprimoramentos SaaS** — categorias configuráveis, upload imagens, dashboard plataforma (opcional)
+
+**Concluído recentemente:**
+- Supabase dedicado `qjynmumyoypzvqdaznnn` + Railway
+- Onboarding: e-mail dono, senha gerada, credenciais na plataforma
+- Billing lojista: trial, planos Starter/Pro, checkout manual/Stripe
+1. **Domínio custom** — adiado; script `CONFIGURAR-DOMINIO.bat`
 3. Stripe live (`BILLING_PROVIDER=stripe` + chaves)
 4. Nginx/Caddy na VPS com HTTPS (alternativa ao Railway)
 5. **Não** alterar layout da loja pública

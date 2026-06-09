@@ -222,6 +222,8 @@ const server = http.createServer(async (request, response) => {
         const result = await createTenant({
           id: body?.id,
           name: body?.name,
+          ownerEmail: body?.ownerEmail,
+          ownerPassword: body?.ownerPassword,
         });
 
         if (result.error) {
@@ -229,7 +231,10 @@ const server = http.createServer(async (request, response) => {
           return;
         }
 
-        sendJson(response, 201, { tenant: result.tenant });
+        sendJson(response, 201, {
+          tenant: result.tenant,
+          onboarding: result.onboarding,
+        });
         return;
       }
     }

@@ -49,12 +49,20 @@ export const ADMIN_PAGES = {
     description: 'Dúvidas e respostas exibidas no FAQ',
     group: 'Página',
   },
+  assinatura: {
+    title: 'Assinatura',
+    description: 'Trial, plano atual e upgrade da loja',
+    group: 'Principal',
+  },
 };
 
 export const ADMIN_NAV = [
   {
     label: 'Principal',
-    items: [{ id: 'dashboard', label: 'Dashboard', icon: 'smartphone' }],
+    items: [
+      { id: 'dashboard', label: 'Dashboard', icon: 'smartphone' },
+      { id: 'assinatura', label: 'Assinatura', icon: 'star' },
+    ],
   },
   {
     label: 'Minha loja',

@@ -27,15 +27,14 @@ export async function fetchAllTenants() {
   return payload.tenants ?? [];
 }
 
-export async function createTenant({ id, name }) {
+export async function createTenant({ id, name, ownerEmail, ownerPassword }) {
   const response = await fetch(buildApiUrl('/tenants'), {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ id, name }),
+    body: JSON.stringify({ id, name, ownerEmail, ownerPassword }),
   });
 
-  const payload = await parseJsonResponse(response);
-  return payload.tenant;
+  return parseJsonResponse(response);
 }
 
 export async function updateTenant(tenantId, patch) {

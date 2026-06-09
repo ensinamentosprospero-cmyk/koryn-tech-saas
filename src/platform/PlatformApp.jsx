@@ -84,11 +84,103 @@ function PlatformLogin({ onSuccess }) {
   );
 }
 
+function OnboardingSuccessModal({ data, onClose }) {
+  if (!data) return null;
+
+  const storeUrl = buildTenantStoreUrl(data.tenant.id, {
+    protocol: window.location.protocol,
+    hostname: window.location.hostname,
+    port: window.location.port,
+    baseDomains: getTenantBaseDomains(),
+  });
+
+  const copyText = [
+    `Loja: ${data.tenant.name}`,
+    `URL: ${storeUrl}`,
+    `Admin: ${data.onboarding.ownerEmail}`,
+    `Senha: ${data.onboarding.ownerPassword}`,
+    `Plano: ${data.onboarding.planName} (trial 14 dias)`,
+  ].join('\n');
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(copyText);
+    } catch {
+      // ignore
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 px-4">
+      <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-900 p-6 shadow-2xl">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">Loja criada</p>
+        <h2 className="mt-2 text-xl font-extrabold text-white">{data.tenant.name}</h2>
+        <p className="mt-1 text-sm text-slate-400">
+          Envie estes dados ao lojista para o primeiro acesso.
+        </p>
+
+        <dl className="mt-5 space-y-3 rounded-2xl bg-slate-950/80 p-4 text-sm">
+          <div>
+            <dt className="text-xs font-semibold text-slate-500">URL da loja</dt>
+            <dd className="mt-1 break-all font-mono text-brand-200">{storeUrl}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold text-slate-500">E-mail admin</dt>
+            <dd className="mt-1 font-semibold text-white">{data.onboarding.ownerEmail}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold text-slate-500">Senha admin</dt>
+            <dd className="mt-1 font-mono text-amber-200">{data.onboarding.ownerPassword}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-semibold text-slate-500">Trial</dt>
+            <dd className="mt-1 text-slate-200">
+              {data.onboarding.planName} — 14 dias
+              {data.onboarding.trialEndsAt
+                ? ` (até ${new Date(data.onboarding.trialEndsAt).toLocaleDateString('pt-BR')})`
+                : ''}
+            </dd>
+          </div>
+        </dl>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-700"
+          >
+            Copiar credenciais
+          </button>
+          <a
+            href={storeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-semibold text-slate-200 hover:bg-white/5"
+          >
+            Abrir loja
+          </a>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-white/10 px-4 py-2.5 text-sm font-semibold text-slate-200 hover:bg-white/5"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CreateTenantForm({ onCreated }) {
   const [id, setId] = useState('');
   const [name, setName] = useState('');
+  const [ownerEmail, setOwnerEmail] = useState('');
+  const [ownerPassword, setOwnerPassword] = useState('');
+  const [autoPassword, setAutoPassword] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [onboarding, setOnboarding] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -96,10 +188,20 @@ function CreateTenantForm({ onCreated }) {
     setError('');
 
     try {
-      const tenant = await createTenant({ id, name });
+      const result = await createTenant({
+        id,
+        name,
+        ownerEmail,
+        ownerPassword: autoPassword ? undefined : ownerPassword,
+      });
+
       setId('');
       setName('');
-      onCreated(tenant);
+      setOwnerEmail('');
+      setOwnerPassword('');
+      setAutoPassword(true);
+      onCreated(result.tenant);
+      setOnboarding(result);
     } catch (submitError) {
       setError(submitError.message);
     } finally {
@@ -108,47 +210,86 @@ function CreateTenantForm({ onCreated }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="rounded-2xl border border-white/10 bg-slate-900/70 p-5"
-    >
-      <h2 className="text-sm font-bold text-white">Nova loja</h2>
-      <p className="mt-1 text-xs text-slate-400">
-        ID usado na URL: <code className="text-brand-300">?loja=seu-id</code>
-      </p>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <label className="block">
-          <span className="mb-1 block text-xs font-semibold text-slate-300">ID da loja</span>
-          <input
-            value={id}
-            onChange={(event) => setId(event.target.value.toLowerCase())}
-            placeholder="minha-loja"
-            className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
-          />
-        </label>
-
-        <label className="block">
-          <span className="mb-1 block text-xs font-semibold text-slate-300">Nome exibido</span>
-          <input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Minha Loja de Eletrônicos"
-            className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
-          />
-        </label>
-      </div>
-
-      {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
-
-      <button
-        type="submit"
-        disabled={submitting}
-        className="mt-4 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+    <>
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-2xl border border-white/10 bg-slate-900/70 p-5"
       >
-        {submitting ? 'Criando…' : 'Criar loja'}
-      </button>
-    </form>
+        <h2 className="text-sm font-bold text-white">Nova loja</h2>
+        <p className="mt-1 text-xs text-slate-400">
+          Cria loja + dono + trial 14 dias. URL: subdomínio ou{' '}
+          <code className="text-brand-300">?loja=id</code>
+        </p>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-300">ID da loja</span>
+            <input
+              value={id}
+              onChange={(event) => setId(event.target.value.toLowerCase())}
+              placeholder="minha-loja"
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-300">Nome exibido</span>
+            <input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              placeholder="Minha Loja de Eletrônicos"
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
+            />
+          </label>
+
+          <label className="block sm:col-span-2">
+            <span className="mb-1 block text-xs font-semibold text-slate-300">E-mail do dono</span>
+            <input
+              type="email"
+              value={ownerEmail}
+              onChange={(event) => setOwnerEmail(event.target.value)}
+              placeholder="dono@minhaloja.com"
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
+            />
+          </label>
+
+          <label className="flex items-center gap-2 sm:col-span-2">
+            <input
+              type="checkbox"
+              checked={autoPassword}
+              onChange={(event) => setAutoPassword(event.target.checked)}
+              className="rounded border-white/20 bg-slate-950"
+            />
+            <span className="text-xs text-slate-300">Gerar senha automaticamente</span>
+          </label>
+
+          {!autoPassword && (
+            <label className="block sm:col-span-2">
+              <span className="mb-1 block text-xs font-semibold text-slate-300">Senha do dono</span>
+              <input
+                type="text"
+                value={ownerPassword}
+                onChange={(event) => setOwnerPassword(event.target.value)}
+                placeholder="Senha forte"
+                className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
+              />
+            </label>
+          )}
+        </div>
+
+        {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="mt-4 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+        >
+          {submitting ? 'Criando…' : 'Criar loja com onboarding'}
+        </button>
+      </form>
+
+      <OnboardingSuccessModal data={onboarding} onClose={() => setOnboarding(null)} />
+    </>
   );
 }
 
