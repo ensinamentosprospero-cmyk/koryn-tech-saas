@@ -45,7 +45,17 @@ Sistema SaaS multi-tenant para lojistas de eletrônicos personalizarem sua loja 
 
 ## Próximo passo exato (para o próximo agent)
 
-**Deploy remoto configurado** — arquivos `Dockerfile`, `railway.toml`, `docker-compose.yml`.
+**GitHub publicado** — repositório remoto configurado e código enviado.
+
+- **Repo:** https://github.com/ensinamentosprospero-cmyk/koryn-tech-saas
+- **Branch:** `main`
+- **Script local:** `PUBLICAR-GITHUB.bat` (login + push futuros)
+
+**Próximo deploy (Railway):**
+1. railway.app → **New Project** → **Deploy from GitHub** → repo `koryn-tech-saas`
+2. Variáveis: `NODE_ENV=production`, `SERVE_STATIC=true`, `JWT_SECRET` (gerar), `VITE_TENANT_BASE_DOMAINS`
+3. **Volume:** montar em `/app/server/data` (SQLite persistente)
+4. Domínio custom + DNS wildcard para subdomínios de loja
 
 Quando o usuário solicitar:
 1. Ajudar com credenciais Railway / DNS / Stripe live
