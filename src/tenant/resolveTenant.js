@@ -4,6 +4,7 @@ import {
   isPlatformHostname,
   parseTenantBaseDomains,
   resolveTenantIdFromHostname,
+  supportsTenantSubdomains,
 } from './resolveTenantFromHost';
 
 const TENANT_BASE_DOMAINS = parseTenantBaseDomains(import.meta.env.VITE_TENANT_BASE_DOMAINS);
@@ -85,4 +86,10 @@ export function shouldRenderPlatformApp(pathname = window.location.pathname) {
   return isPlatformHostname(window.location.hostname, TENANT_BASE_DOMAINS);
 }
 
-export { buildTenantStoreUrl, isPlatformHostname, parseTenantBaseDomains, resolveTenantIdFromHostname, supportsTenantSubdomains };
+export {
+  buildTenantStoreUrl,
+  isPlatformHostname,
+  parseTenantBaseDomains,
+  resolveTenantIdFromHostname,
+  supportsTenantSubdomains,
+};
