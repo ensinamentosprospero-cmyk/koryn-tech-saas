@@ -1,0 +1,14 @@
+{
+  "tenants": [
+    {
+      "id": "default",
+      "name": "Koryn Tech",
+      "active": true
+    },
+    {
+      "id": "demo",
+      "name": "Loja Demo",
+      "active": true
+    }
+  ]
+}

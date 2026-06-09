@@ -1,0 +1,24 @@
+---
+description: Continuidade do projeto SaaS multi-tenant — leia antes de qualquer alteração
+alwaysApply: true
+---
+
+# Continuidade obrigatória
+
+Antes de implementar qualquer coisa neste repositório:
+
+1. Leia **`docs/PROJECT_CONTINUITY.md`** por completo
+2. Siga exatamente o **"Próximo passo exato"** descrito lá
+3. Ao concluir sua etapa, **atualize** `docs/PROJECT_CONTINUITY.md` (status da fase + próximo passo)
+
+## Regras fixas
+
+- Não alterar layout do site público sem pedido explícito
+- Não remover funcionalidades existentes
+- Não apagar localStorage do cliente
+- Não refazer o projeto do zero
+- Trabalhar por fases na ordem definida no documento de continuidade
+
+## Projeto
+
+Loja SaaS multi-tenant em `cell-prime-store` — React + Vite (5173) + API Node (3001).

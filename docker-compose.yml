@@ -1,0 +1,19 @@
+services:
+  koryn-tech:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      SERVE_STATIC: "true"
+      PORT: 3001
+      JWT_SECRET: troque-em-producao
+      CORS_ORIGIN: "*"
+      VITE_TENANT_BASE_DOMAINS: localhost
+      STORE_DB_PATH: /app/server/data/store.db
+    volumes:
+      - koryn_data:/app/server/data
+    restart: unless-stopped
+
+volumes:
+  koryn_data:

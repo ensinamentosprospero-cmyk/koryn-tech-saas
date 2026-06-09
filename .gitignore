@@ -1,0 +1,12 @@
+node_modules
+dist
+.DS_Store
+*.local
+.env
+.env.*
+!.env.example
+
+# SQLite local (não versionar dados de runtime)
+server/data/store.db
+server/data/store.db-journal
+

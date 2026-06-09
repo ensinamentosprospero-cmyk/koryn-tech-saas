@@ -1,0 +1,1600 @@
+{
+  "store": {
+    "name": "Koryn Tech",
+    "tagline": "Eletrônicos & Acessórios",
+    "phone": "5538999999999",
+    "phoneDisplay": "(38) 99999-9999",
+    "instagram": "@koryn_tech",
+    "instagramUrl": "https://instagram.com/koryn_tech",
+    "city": "Montes Claros - MG",
+    "hours": "Segunda a Sexta: 8h às 18h\nSábado: 8h às 13h",
+    "description": "Celulares e acessórios com atendimento rápido pelo WhatsApp.",
+    "deliveryTitle": "Entrega grátis",
+    "deliveryDescription": "Entrega ou retirada combinada pelo WhatsApp, conforme sua região."
+  },
+  "messages": {
+    "general": "Olá, vim pelo site e gostaria de ver os produtos disponíveis."
+  },
+  "sections": {
+    "ofertas": true,
+    "produtos": true,
+    "faq": true,
+    "contato": true
+  },
+  "productsPerPage": 6,
+  "products": [
+    {
+      "id": 1,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Smartphone Galaxy A15 128GB",
+      "price": "R$ 1.199,90",
+      "badge": "Mais vendido",
+      "badgeColor": "blue",
+      "description": "Boa bateria e desempenho para o dia a dia.",
+      "details": [
+        "128GB",
+        "Garantia informada",
+        "Ótimo custo-benefício"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-1.jpg",
+      "photoAlt": "Smartphone Galaxy A15 128GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 2,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Smartphone Galaxy A05 64GB",
+      "price": "R$ 699,90",
+      "badge": "Econômico",
+      "badgeColor": "green",
+      "description": "Ideal para uso básico e redes sociais.",
+      "details": [
+        "64GB",
+        "Dual chip",
+        "Bateria durável"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-2.jpg",
+      "photoAlt": "Smartphone Galaxy A05 64GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 3,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Redmi Note 13 128GB",
+      "price": "R$ 1.099,90",
+      "badge": "Custo-benefício",
+      "badgeColor": "orange",
+      "description": "Tela ampla e boa câmera.",
+      "details": [
+        "128GB",
+        "Carregamento rápido",
+        "Desempenho equilibrado"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-1.jpg",
+      "photoAlt": "Redmi Note 13 128GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 4,
+      "category": "Celulares",
+      "image": "iphone",
+      "name": "iPhone 11 64GB",
+      "price": "R$ 2.499,90",
+      "badge": "Premium",
+      "badgeColor": "slate",
+      "description": "Apple com desempenho confiável.",
+      "details": [
+        "64GB",
+        "iOS",
+        "Câmera dupla"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-2.jpg",
+      "photoAlt": "iPhone 11 64GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 5,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Moto G54 128GB",
+      "price": "R$ 999,90",
+      "badge": "Popular",
+      "badgeColor": "blue",
+      "description": "Ótimo para trabalho e lazer.",
+      "details": [
+        "128GB",
+        "5G",
+        "Som estéreo"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-1.jpg",
+      "photoAlt": "Moto G54 128GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 6,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Galaxy A25 256GB",
+      "price": "R$ 1.349,90",
+      "badge": "Novo",
+      "badgeColor": "purple",
+      "description": "Mais espaço e fluidez no dia a dia.",
+      "details": [
+        "256GB",
+        "Tela Super AMOLED",
+        "Garantia informada"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-2.jpg",
+      "photoAlt": "Galaxy A25 256GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 7,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Realme C55 128GB",
+      "price": "R$ 849,90",
+      "badge": "Oferta",
+      "badgeColor": "orange",
+      "description": "Leve, rápido e com boa autonomia.",
+      "details": [
+        "128GB",
+        "Carregamento 33W",
+        "Design fino"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-1.jpg",
+      "photoAlt": "Realme C55 128GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 8,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Poco X6 256GB",
+      "price": "R$ 1.599,90",
+      "badge": "Performance",
+      "badgeColor": "blue",
+      "description": "Indicado para jogos e multitarefa.",
+      "details": [
+        "256GB",
+        "Snapdragon",
+        "Tela 120Hz"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-2.jpg",
+      "photoAlt": "Poco X6 256GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 9,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Galaxy A35 128GB",
+      "price": "R$ 1.449,90",
+      "badge": "Destaque",
+      "badgeColor": "green",
+      "description": "Equilíbrio entre câmera e bateria.",
+      "details": [
+        "128GB",
+        "IP67",
+        "Atualizações Samsung"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-1.jpg",
+      "photoAlt": "Galaxy A35 128GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 10,
+      "category": "Celulares",
+      "image": "smartphone",
+      "name": "Moto G84 256GB",
+      "price": "R$ 1.299,90",
+      "badge": "Favorito",
+      "badgeColor": "purple",
+      "description": "Tela pOLED e acabamento premium.",
+      "details": [
+        "256GB",
+        "OIS na câmera",
+        "Carregamento turbo"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/celulares-2.jpg",
+      "photoAlt": "Moto G84 256GB",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 11,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Carregador Turbo USB-C 20W",
+      "price": "R$ 59,90",
+      "badge": "Oferta",
+      "badgeColor": "orange",
+      "description": "Carregamento rápido e compacto.",
+      "details": [
+        "20W turbo",
+        "Entrada USB-C",
+        "Uso diário"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-1.jpg",
+      "photoAlt": "Carregador Turbo USB-C 20W",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 12,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Carregador Turbo USB-C 30W",
+      "price": "R$ 69,90",
+      "badge": "Rápido",
+      "badgeColor": "blue",
+      "description": "Mais potência para recarga expressa.",
+      "details": [
+        "30W turbo",
+        "USB-C",
+        "Compacto"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-2.jpg",
+      "photoAlt": "Carregador Turbo USB-C 30W",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 13,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Carregador Dual USB 2 Portas",
+      "price": "R$ 49,90",
+      "badge": "Prático",
+      "badgeColor": "green",
+      "description": "Carregue dois aparelhos ao mesmo tempo.",
+      "details": [
+        "2 portas USB",
+        "Proteção térmica",
+        "Uso em casa"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-1.jpg",
+      "photoAlt": "Carregador Dual USB 2 Portas",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 14,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Carregador Wireless 15W",
+      "price": "R$ 89,90",
+      "badge": "Sem fio",
+      "badgeColor": "purple",
+      "description": "Recarga prática sem cabos.",
+      "details": [
+        "15W wireless",
+        "Compatível Qi",
+        "Base antiderrapante"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-2.jpg",
+      "photoAlt": "Carregador Wireless 15W",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 15,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Fonte USB-C 65W Notebook",
+      "price": "R$ 129,90",
+      "badge": "Potente",
+      "badgeColor": "slate",
+      "description": "Ideal para notebook e celular.",
+      "details": [
+        "65W PD",
+        "USB-C",
+        "Carregamento universal"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-1.jpg",
+      "photoAlt": "Fonte USB-C 65W Notebook",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 16,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Carregador Lightning iPhone",
+      "price": "R$ 54,90",
+      "badge": "Apple",
+      "badgeColor": "slate",
+      "description": "Compatível com iPhone Lightning.",
+      "details": [
+        "Certificado",
+        "Carga estável",
+        "Cabos originais ou compatíveis"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-2.jpg",
+      "photoAlt": "Carregador Lightning iPhone",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 17,
+      "category": "Carregadores",
+      "image": "car",
+      "name": "Carregador Veicular 2 Portas",
+      "price": "R$ 44,90",
+      "badge": "Veicular",
+      "badgeColor": "orange",
+      "description": "Perfeito para usar no carro.",
+      "details": [
+        "2 USB",
+        "12V/24V",
+        "Proteção contra surtos"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-1.jpg",
+      "photoAlt": "Carregador Veicular 2 Portas",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 18,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Carregador Magnético MagSafe",
+      "price": "R$ 99,90",
+      "badge": "Magnético",
+      "badgeColor": "blue",
+      "description": "Encaixe magnético para iPhone.",
+      "details": [
+        "MagSafe",
+        "15W",
+        "Fixação firme"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-2.jpg",
+      "photoAlt": "Carregador Magnético MagSafe",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 19,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Adaptador de Tomada USB-C",
+      "price": "R$ 39,90",
+      "badge": "Compacto",
+      "badgeColor": "green",
+      "description": "Fonte básica para recarga diária.",
+      "details": [
+        "USB-C",
+        "Leve",
+        "Viagem"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-1.jpg",
+      "photoAlt": "Adaptador de Tomada USB-C",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 20,
+      "category": "Carregadores",
+      "image": "charger",
+      "name": "Power Bank 10000mAh",
+      "price": "R$ 119,90",
+      "badge": "Portátil",
+      "badgeColor": "purple",
+      "description": "Energia extra onde você estiver.",
+      "details": [
+        "10000mAh",
+        "USB-C in/out",
+        "Indicador LED"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/carregadores-2.jpg",
+      "photoAlt": "Power Bank 10000mAh",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 21,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone Bluetooth TWS",
+      "price": "R$ 89,90",
+      "badge": "Novo",
+      "badgeColor": "purple",
+      "description": "Som limpo e boa bateria.",
+      "details": [
+        "Bluetooth estável",
+        "Confortável",
+        "Boa autonomia"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-1.jpg",
+      "photoAlt": "Fone Bluetooth TWS",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 22,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone Bluetooth Over-Ear",
+      "price": "R$ 149,90",
+      "badge": "Conforto",
+      "badgeColor": "blue",
+      "description": "Graves potentes e isolamento acústico.",
+      "details": [
+        "Over-ear",
+        "Bateria longa",
+        "Dobrável"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-2.jpg",
+      "photoAlt": "Fone Bluetooth Over-Ear",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 23,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone com Fio P2",
+      "price": "R$ 29,90",
+      "badge": "Econômico",
+      "badgeColor": "green",
+      "description": "Simples e confiável para o dia a dia.",
+      "details": [
+        "Entrada P2",
+        "Microfone inline",
+        "Leve"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-1.jpg",
+      "photoAlt": "Fone com Fio P2",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 24,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone Esportivo IPX5",
+      "price": "R$ 79,90",
+      "badge": "Esportivo",
+      "badgeColor": "orange",
+      "description": "Resistente à água e suor.",
+      "details": [
+        "IPX5",
+        "Fixação segura",
+        "Bluetooth 5.3"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-2.jpg",
+      "photoAlt": "Fone Esportivo IPX5",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 25,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone Gamer com Microfone",
+      "price": "R$ 129,90",
+      "badge": "Gamer",
+      "badgeColor": "slate",
+      "description": "Áudio imersivo para jogos.",
+      "details": [
+        "Microfone destacável",
+        "Conforto prolongado",
+        "Graves reforçados"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-1.jpg",
+      "photoAlt": "Fone Gamer com Microfone",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 26,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone Infantil Bluetooth",
+      "price": "R$ 69,90",
+      "badge": "Infantil",
+      "badgeColor": "green",
+      "description": "Volume limitado para crianças.",
+      "details": [
+        "Limite de volume",
+        "Design colorido",
+        "Bluetooth"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-2.jpg",
+      "photoAlt": "Fone Infantil Bluetooth",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 27,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone Neckband Bluetooth",
+      "price": "R$ 59,90",
+      "badge": "Neckband",
+      "badgeColor": "blue",
+      "description": "Prático para usar em movimento.",
+      "details": [
+        "Neckband",
+        "Controles integrados",
+        "Autonomia média"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-1.jpg",
+      "photoAlt": "Fone Neckband Bluetooth",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 28,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone TWS Pro Cancelamento",
+      "price": "R$ 179,90",
+      "badge": "Premium",
+      "badgeColor": "purple",
+      "description": "Reduz ruídos externos com qualidade.",
+      "details": [
+        "ANC",
+        "Estojo carregador",
+        "Toque inteligente"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-2.jpg",
+      "photoAlt": "Fone TWS Pro Cancelamento",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 29,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone TWS Compacto",
+      "price": "R$ 74,90",
+      "badge": "Compacto",
+      "badgeColor": "orange",
+      "description": "Estojo pequeno e fácil de carregar.",
+      "details": [
+        "Estojo slim",
+        "Bluetooth 5.0",
+        "Boa bateria"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-1.jpg",
+      "photoAlt": "Fone TWS Compacto",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 30,
+      "category": "Fones",
+      "image": "headphones",
+      "name": "Fone TWS Touch Screen",
+      "price": "R$ 199,90",
+      "badge": "Exclusivo",
+      "badgeColor": "slate",
+      "description": "Case com display e controles avançados.",
+      "details": [
+        "Case com tela",
+        "ANC básico",
+        "Som premium"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/fones-2.jpg",
+      "photoAlt": "Fone TWS Touch Screen",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 31,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película 3D Privacidade",
+      "price": "R$ 39,90",
+      "badge": "Proteção",
+      "badgeColor": "slate",
+      "description": "Proteção e privacidade para a tela.",
+      "details": [
+        "Proteção 3D",
+        "Efeito privacidade",
+        "Diversos modelos"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-1.jpg",
+      "photoAlt": "Película 3D Privacidade",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 32,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película de Vidro 9H",
+      "price": "R$ 29,90",
+      "badge": "9H",
+      "badgeColor": "blue",
+      "description": "Alta resistência a riscos.",
+      "details": [
+        "Vidro temperado",
+        "Bordas arredondadas",
+        "Fácil instalação"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-2.jpg",
+      "photoAlt": "Película de Vidro 9H",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 33,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película Hidrogel",
+      "price": "R$ 34,90",
+      "badge": "Hidrogel",
+      "badgeColor": "green",
+      "description": "Flexível e auto-regenerável.",
+      "details": [
+        "Anti-risco",
+        "Toque suave",
+        "Curvas completas"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-1.jpg",
+      "photoAlt": "Película Hidrogel",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 34,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película Anti-Reflexo",
+      "price": "R$ 32,90",
+      "badge": "Anti-reflexo",
+      "badgeColor": "orange",
+      "description": "Melhor visibilidade sob luz forte.",
+      "details": [
+        "Matte finish",
+        "Anti-impressão digital",
+        "Proteção extra"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-2.jpg",
+      "photoAlt": "Película Anti-Reflexo",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 35,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película Privacidade Full",
+      "price": "R$ 44,90",
+      "badge": "Privacidade",
+      "badgeColor": "slate",
+      "description": "Privacidade total em ambientes públicos.",
+      "details": [
+        "Full cover",
+        "Anti-espionagem",
+        "Vidro 9H"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-1.jpg",
+      "photoAlt": "Película Privacidade Full",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 36,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película para Câmera",
+      "price": "R$ 19,90",
+      "badge": "Câmera",
+      "badgeColor": "purple",
+      "description": "Protege as lentes sem perder qualidade.",
+      "details": [
+        "Lente câmera",
+        "Transparente",
+        "Kit multi-modelos"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-2.jpg",
+      "photoAlt": "Película para Câmera",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 37,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película para Tablet",
+      "price": "R$ 49,90",
+      "badge": "Tablet",
+      "badgeColor": "blue",
+      "description": "Proteção reforçada para telas grandes.",
+      "details": [
+        "Tablet 10\"",
+        "Vidro 9H",
+        "Instalação assistida"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-1.jpg",
+      "photoAlt": "Película para Tablet",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 38,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película Nano Flexível",
+      "price": "R$ 27,90",
+      "badge": "Nano",
+      "badgeColor": "green",
+      "description": "Leve, fina e resistente.",
+      "details": [
+        "Nano flex",
+        "Auto-cura leve",
+        "Compatível curvas"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-2.jpg",
+      "photoAlt": "Película Nano Flexível",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 39,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película 3D Transparente",
+      "price": "R$ 24,90",
+      "badge": "Transparente",
+      "badgeColor": "orange",
+      "description": "Proteção discreta sem alterar a tela.",
+      "details": [
+        "3D full",
+        "Alta transparência",
+        "Anti-risco"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-1.jpg",
+      "photoAlt": "Película 3D Transparente",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 40,
+      "category": "Películas",
+      "image": "film",
+      "name": "Película com Aplicador",
+      "price": "R$ 36,90",
+      "badge": "Kit",
+      "badgeColor": "blue",
+      "description": "Instalação mais fácil com ferramentas.",
+      "details": [
+        "Aplicador incluso",
+        "Sem bolhas",
+        "Vidro 9H"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/peliculas-2.jpg",
+      "photoAlt": "Película com Aplicador",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 41,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo USB-C Reforçado 1m",
+      "price": "R$ 29,90",
+      "badge": "Resistente",
+      "badgeColor": "blue",
+      "description": "Cabo reforçado para uso diário.",
+      "details": [
+        "1 metro",
+        "Nylon reforçado",
+        "Carga e dados"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-1.jpg",
+      "photoAlt": "Cabo USB-C Reforçado 1m",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 42,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo Lightning 1m",
+      "price": "R$ 34,90",
+      "badge": "Lightning",
+      "badgeColor": "slate",
+      "description": "Compatível com iPhone e iPad.",
+      "details": [
+        "1 metro",
+        "Carga rápida",
+        "Nylon trançado"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-2.jpg",
+      "photoAlt": "Cabo Lightning 1m",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 43,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo USB-C 2m",
+      "price": "R$ 39,90",
+      "badge": "2 metros",
+      "badgeColor": "green",
+      "description": "Mais alcance para carregar longe da tomada.",
+      "details": [
+        "2 metros",
+        "USB-C",
+        "Reforçado"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-1.jpg",
+      "photoAlt": "Cabo USB-C 2m",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 44,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo USB-C 90° Gaming",
+      "price": "R$ 42,90",
+      "badge": "Gamer",
+      "badgeColor": "purple",
+      "description": "Conector em L ideal para jogar carregando.",
+      "details": [
+        "Conector 90°",
+        "USB-C",
+        "Alta durabilidade"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-2.jpg",
+      "photoAlt": "Cabo USB-C 90° Gaming",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 45,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo Micro USB 1m",
+      "price": "R$ 19,90",
+      "badge": "Micro USB",
+      "badgeColor": "orange",
+      "description": "Para aparelhos com entrada micro USB.",
+      "details": [
+        "1 metro",
+        "Carga estável",
+        "Revestimento reforçado"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-1.jpg",
+      "photoAlt": "Cabo Micro USB 1m",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 46,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo USB-C para Lightning",
+      "price": "R$ 49,90",
+      "badge": "Combo",
+      "badgeColor": "blue",
+      "description": "Conecte iPhone em fontes USB-C.",
+      "details": [
+        "USB-C para Lightning",
+        "PD compatível",
+        "1 metro"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-2.jpg",
+      "photoAlt": "Cabo USB-C para Lightning",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 47,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo Nylon Trançado 1.5m",
+      "price": "R$ 36,90",
+      "badge": "Premium",
+      "badgeColor": "slate",
+      "description": "Acabamento premium e alta resistência.",
+      "details": [
+        "1,5 metro",
+        "Nylon trançado",
+        "Transferência de dados"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-1.jpg",
+      "photoAlt": "Cabo Nylon Trançado 1.5m",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 48,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo USB-C 3m",
+      "price": "R$ 54,90",
+      "badge": "3 metros",
+      "badgeColor": "green",
+      "description": "Extra longo para sofá, cama ou escritório.",
+      "details": [
+        "3 metros",
+        "USB-C",
+        "Alta flexibilidade"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-2.jpg",
+      "photoAlt": "Cabo USB-C 3m",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 49,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo Magnético USB-C",
+      "price": "R$ 59,90",
+      "badge": "Magnético",
+      "badgeColor": "purple",
+      "description": "Encaixe magnético prático e moderno.",
+      "details": [
+        "Conector magnético",
+        "USB-C",
+        "Evita desgaste"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-1.jpg",
+      "photoAlt": "Cabo Magnético USB-C",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 50,
+      "category": "Cabos",
+      "image": "cable",
+      "name": "Cabo Duo USB-C/Lightning",
+      "price": "R$ 64,90",
+      "badge": "2 em 1",
+      "badgeColor": "orange",
+      "description": "Um cabo para Android e iPhone.",
+      "details": [
+        "2 pontas",
+        "Carga rápida",
+        "Viagem"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/cabos-2.jpg",
+      "photoAlt": "Cabo Duo USB-C/Lightning",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 51,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha Anti-Impacto",
+      "price": "R$ 34,90",
+      "badge": "Proteção",
+      "badgeColor": "slate",
+      "description": "Proteção extra contra quedas.",
+      "details": [
+        "Anti-impacto",
+        "Diversos modelos",
+        "Boa aderência"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-1.jpg",
+      "photoAlt": "Capinha Anti-Impacto",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 52,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha de Silicone",
+      "price": "R$ 24,90",
+      "badge": "Silicone",
+      "badgeColor": "green",
+      "description": "Macia, leve e confortável na mão.",
+      "details": [
+        "Silicone flexível",
+        "Anti-derrapante",
+        "Várias cores"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-2.jpg",
+      "photoAlt": "Capinha de Silicone",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 53,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha Transparente",
+      "price": "R$ 19,90",
+      "badge": "Transparente",
+      "badgeColor": "blue",
+      "description": "Mostra o design original do aparelho.",
+      "details": [
+        "Crystal clear",
+        "Anti-amarelamento",
+        "Slim"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-1.jpg",
+      "photoAlt": "Capinha Transparente",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 54,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha com Anel",
+      "price": "R$ 39,90",
+      "badge": "Anel",
+      "badgeColor": "purple",
+      "description": "Anel giratório para segurar e apoiar.",
+      "details": [
+        "Anel 360°",
+        "Grip firme",
+        "Proteção lateral"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-2.jpg",
+      "photoAlt": "Capinha com Anel",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 55,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha Carteira",
+      "price": "R$ 49,90",
+      "badge": "Carteira",
+      "badgeColor": "orange",
+      "description": "Guarda cartões junto com o celular.",
+      "details": [
+        "Bolso para cartões",
+        "Fecho magnético",
+        "Proteção frontal"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-1.jpg",
+      "photoAlt": "Capinha Carteira",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 56,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha Antiderrapante",
+      "price": "R$ 27,90",
+      "badge": "Grip",
+      "badgeColor": "green",
+      "description": "Textura que evita escorregar.",
+      "details": [
+        "Textura grip",
+        "Leve",
+        "Bordas elevadas"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-2.jpg",
+      "photoAlt": "Capinha Antiderrapante",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 57,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha Premium Couro",
+      "price": "R$ 59,90",
+      "badge": "Premium",
+      "badgeColor": "slate",
+      "description": "Visual elegante com toque sofisticado.",
+      "details": [
+        "Acabamento couro",
+        "Slim premium",
+        "Proteção completa"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-1.jpg",
+      "photoAlt": "Capinha Premium Couro",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 58,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha Slim Colorida",
+      "price": "R$ 22,90",
+      "badge": "Color",
+      "badgeColor": "blue",
+      "description": "Fina, colorida e prática.",
+      "details": [
+        "Ultra slim",
+        "Cores variadas",
+        "Leve"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-2.jpg",
+      "photoAlt": "Capinha Slim Colorida",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 59,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha com Alça",
+      "price": "R$ 44,90",
+      "badge": "Alça",
+      "badgeColor": "purple",
+      "description": "Alça removível para mais segurança.",
+      "details": [
+        "Alça destacável",
+        "Anti-queda",
+        "Material resistente"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-1.jpg",
+      "photoAlt": "Capinha com Alça",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 60,
+      "category": "Capinhas",
+      "image": "case",
+      "name": "Capinha MagSafe",
+      "price": "R$ 69,90",
+      "badge": "MagSafe",
+      "badgeColor": "orange",
+      "description": "Compatível com acessórios magnéticos.",
+      "details": [
+        "MagSafe",
+        "Encaixe perfeito",
+        "Proteção reforçada"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/capinhas-2.jpg",
+      "photoAlt": "Capinha MagSafe",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 61,
+      "category": "Kits",
+      "image": "charger",
+      "name": "Kit Acessórios Essencial",
+      "price": "R$ 69,90",
+      "badge": "Kit",
+      "badgeColor": "green",
+      "description": "Película, cabo e capinha no mesmo kit.",
+      "details": [
+        "Película 3D",
+        "Cabo USB-C",
+        "Capinha básica"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-1.jpg",
+      "photoAlt": "Kit Acessórios Essencial",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 62,
+      "category": "Kits",
+      "image": "film",
+      "name": "Kit Proteção Total",
+      "price": "R$ 79,90",
+      "badge": "Proteção",
+      "badgeColor": "slate",
+      "description": "Película + capinha anti-impacto.",
+      "details": [
+        "Película 9H",
+        "Capinha reforçada",
+        "Economia no combo"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-2.jpg",
+      "photoAlt": "Kit Proteção Total",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 63,
+      "category": "Kits",
+      "image": "charger",
+      "name": "Kit Carregamento Completo",
+      "price": "R$ 99,90",
+      "badge": "Carregamento",
+      "badgeColor": "orange",
+      "description": "Fonte turbo + cabo reforçado.",
+      "details": [
+        "Carregador 30W",
+        "Cabo nylon",
+        "Pronto para uso"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-1.jpg",
+      "photoAlt": "Kit Carregamento Completo",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 64,
+      "category": "Kits",
+      "image": "car",
+      "name": "Kit Viagem",
+      "price": "R$ 119,90",
+      "badge": "Viagem",
+      "badgeColor": "blue",
+      "description": "Power bank, cabo e adaptador.",
+      "details": [
+        "Power bank",
+        "Cabo USB-C",
+        "Adaptador compacto"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-2.jpg",
+      "photoAlt": "Kit Viagem",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 65,
+      "category": "Kits",
+      "image": "headphones",
+      "name": "Kit Gamer",
+      "price": "R$ 149,90",
+      "badge": "Gamer",
+      "badgeColor": "purple",
+      "description": "Fone gamer + cabo 90° + capinha grip.",
+      "details": [
+        "Fone gamer",
+        "Cabo 90°",
+        "Capinha grip"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-1.jpg",
+      "photoAlt": "Kit Gamer",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 66,
+      "category": "Kits",
+      "image": "charger",
+      "name": "Kit Escritório",
+      "price": "R$ 129,90",
+      "badge": "Escritório",
+      "badgeColor": "green",
+      "description": "Fonte 65W + cabo 2m + suporte básico.",
+      "details": [
+        "Fonte 65W",
+        "Cabo 2m",
+        "Suporte mesa"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-2.jpg",
+      "photoAlt": "Kit Escritório",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 67,
+      "category": "Kits",
+      "image": "car",
+      "name": "Kit Veicular",
+      "price": "R$ 89,90",
+      "badge": "Veicular",
+      "badgeColor": "orange",
+      "description": "Carregador veicular + suporte + cabo.",
+      "details": [
+        "Carregador carro",
+        "Suporte ventosa",
+        "Cabo USB-C"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-1.jpg",
+      "photoAlt": "Kit Veicular",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 68,
+      "category": "Kits",
+      "image": "case",
+      "name": "Kit Família",
+      "price": "R$ 159,90",
+      "badge": "Família",
+      "badgeColor": "blue",
+      "description": "2 películas + 2 capinhas + 2 cabos.",
+      "details": [
+        "2 películas",
+        "2 capinhas",
+        "2 cabos"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-2.jpg",
+      "photoAlt": "Kit Família",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 69,
+      "category": "Kits",
+      "image": "smartphone",
+      "name": "Kit Premium",
+      "price": "R$ 199,90",
+      "badge": "Premium",
+      "badgeColor": "slate",
+      "description": "Capinha premium + película + fone TWS.",
+      "details": [
+        "Capinha premium",
+        "Película 9H",
+        "Fone TWS"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-1.jpg",
+      "photoAlt": "Kit Premium",
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 70,
+      "category": "Kits",
+      "image": "cable",
+      "name": "Kit Básico Econômico",
+      "price": "R$ 49,90",
+      "badge": "Econômico",
+      "badgeColor": "green",
+      "description": "Película básica + cabo + capinha slim.",
+      "details": [
+        "Película básica",
+        "Cabo 1m",
+        "Capinha slim"
+      ],
+      "payment": "Pix, cartão ou dinheiro",
+      "photo": "/products/kits-2.jpg",
+      "photoAlt": "Kit Básico Econômico",
+      "active": true,
+      "deliveryEnabled": true
+    }
+  ],
+  "offers": [
+    {
+      "id": 1,
+      "name": "Kit Carregamento",
+      "includes": [
+        "Carregador turbo",
+        "Cabo USB-C"
+      ],
+      "price": "R$ 79,90",
+      "savings": "Compre o kit e economize",
+      "highlight": true,
+      "image": "/offers/kit-carregamento.jpg",
+      "imageAlt": "Kit carregador turbo e cabo USB-C",
+      "description": "Carregue seu celular com praticidade usando carregador turbo e cabo reforçado.",
+      "details": [
+        "Carregador turbo",
+        "Cabo USB-C",
+        "Ideal para uso diário",
+        "Economia no combo"
+      ],
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 2,
+      "name": "Kit Proteção",
+      "includes": [
+        "Película 3D",
+        "Capinha"
+      ],
+      "price": "R$ 59,90",
+      "savings": "Proteção completa",
+      "highlight": false,
+      "image": "/offers/kit-protecao.jpg",
+      "imageAlt": "Kit película 3D e capinha para celular",
+      "description": "Proteja tela e corpo do aparelho com película e capinha no mesmo kit.",
+      "details": [
+        "Película 3D",
+        "Capinha resistente",
+        "Proteção frontal e traseira",
+        "Diversos modelos"
+      ],
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 3,
+      "name": "Kit Áudio",
+      "includes": [
+        "Fone Bluetooth TWS",
+        "Case para fones"
+      ],
+      "price": "R$ 119,90",
+      "savings": "Som + proteção",
+      "highlight": false,
+      "image": "/offers/kit-audio.jpg",
+      "imageAlt": "Kit fone Bluetooth e case para fones",
+      "description": "Ouça música com qualidade e guarde os fones com case compacto.",
+      "details": [
+        "Fone Bluetooth TWS",
+        "Case para fones",
+        "Boa autonomia",
+        "Som limpo"
+      ],
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 4,
+      "name": "Kit Essencial",
+      "includes": [
+        "Película 3D",
+        "Cabo USB-C"
+      ],
+      "price": "R$ 49,90",
+      "savings": "Básico com desconto",
+      "highlight": false,
+      "image": "/offers/kit-essencial.jpg",
+      "imageAlt": "Kit película 3D e cabo USB-C",
+      "description": "O básico bem feito: proteção para a tela e cabo para recarregar.",
+      "details": [
+        "Película 3D",
+        "Cabo USB-C",
+        "Preço acessível",
+        "Pronto para usar"
+      ],
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 5,
+      "name": "Kit Veicular",
+      "includes": [
+        "Carregador veicular",
+        "Suporte para celular"
+      ],
+      "price": "R$ 89,90",
+      "savings": "Ideal para o carro",
+      "highlight": false,
+      "image": "/offers/kit-veicular.jpg",
+      "imageAlt": "Kit carregador veicular e suporte para celular",
+      "description": "Carregue e use o celular com segurança durante a viagem.",
+      "details": [
+        "Carregador veicular",
+        "Suporte ajustável",
+        "Fixação firme",
+        "Uso no carro"
+      ],
+      "active": true,
+      "deliveryEnabled": true
+    },
+    {
+      "id": 6,
+      "name": "Combo Turbo",
+      "includes": [
+        "Carregador turbo",
+        "Película 3D",
+        "Capinha"
+      ],
+      "price": "R$ 99,90",
+      "savings": "Mais vendido",
+      "highlight": false,
+      "image": "/offers/combo-turbo.jpg",
+      "imageAlt": "Combo carregador, película e capinha",
+      "description": "Carregamento, proteção de tela e capinha em um combo completo.",
+      "details": [
+        "Carregador turbo",
+        "Película 3D",
+        "Capinha",
+        "Melhor custo-benefício"
+      ],
+      "active": true,
+      "deliveryEnabled": true
+    }
+  ],
+  "faqs": [
+    {
+      "id": 1,
+      "question": "Posso comprar pelo WhatsApp?",
+      "answer": "Sim. Escolha o produto e chame no WhatsApp para confirmar disponibilidade e pagamento.",
+      "active": true
+    },
+    {
+      "id": 2,
+      "question": "Os produtos têm garantia?",
+      "answer": "Sim. A garantia é informada no momento da compra.",
+      "active": true
+    },
+    {
+      "id": 3,
+      "question": "Vocês entregam?",
+      "answer": "Entrega ou retirada combinada pelo WhatsApp, conforme sua região.",
+      "active": true
+    },
+    {
+      "id": 4,
+      "question": "Aceitam cartão?",
+      "answer": "Sim. Pix, cartão ou dinheiro, conforme combinado no atendimento.",
+      "active": true
+    }
+  ],
+  "auth": {
+    "adminEmail": "admin@koryntech.com",
+    "adminPassword": "korynadmin",
+    "userEmail": "cliente@koryntech.com",
+    "userPassword": "cliente123",
+    "registeredUsers": []
+  },
+  "analytics": {
+    "pageViews": 0,
+    "whatsAppClicks": 0,
+    "lastVisit": null
+  }
+}

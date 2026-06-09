@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.cursor
+.env
+.env.*
+!.env.example
+server/data/store.db
+server/data/store.db-journal
+*.md
+!docs/PROJECT_CONTINUITY.md
+terminals

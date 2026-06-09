@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    @apply bg-surface font-sans text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-950;
+  }
+
+  html.dark ::selection {
+    @apply bg-brand-700 text-white;
+  }
+}
+
+@layer components {
+  html.dark header {
+    @apply border-slate-800 bg-slate-950/95;
+  }
+
+  html.dark header .text-ink {
+    @apply text-slate-100;
+  }
+
+  html.dark header .text-brand-600 {
+    @apply text-brand-400;
+  }
+
+  html.dark header .border-slate-200\/90 {
+    @apply border-slate-700 bg-slate-900 text-slate-200;
+  }
+
+  html.dark main {
+    @apply bg-slate-950;
+  }
+
+  html.dark .bg-white {
+    @apply bg-slate-900 text-slate-100;
+  }
+
+  html.dark .bg-surface {
+    @apply bg-slate-950;
+  }
+
+  html.dark .text-ink {
+    @apply text-slate-100;
+  }
+
+  html.dark .text-muted,
+  html.dark .text-slate-600,
+  html.dark .text-slate-700,
+  html.dark .text-slate-800 {
+    @apply text-slate-300;
+  }
+
+  html.dark .border-slate-200,
+  html.dark .border-slate-200\/90,
+  html.dark .border-slate-200\/80,
+  html.dark .border-slate-100 {
+    @apply border-slate-700;
+  }
+
+  html.dark .bg-slate-50,
+  html.dark .bg-slate-50\/50,
+  html.dark .bg-slate-50\/70 {
+    @apply bg-slate-800/70 text-slate-100;
+  }
+
+  html.dark .bg-slate-100 {
+    @apply bg-slate-800;
+  }
+
+  html.dark input,
+  html.dark textarea {
+    @apply border-slate-700 bg-slate-800 text-slate-100 placeholder:text-slate-500;
+  }
+
+  html.dark .ring-premium {
+    @apply ring-slate-700/40;
+  }
+}
+
+@layer utilities {
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-brand-700 via-brand-600 to-brand-800 bg-clip-text text-transparent;
+  }
+
+  .bg-mesh-hero {
+    background-image:
+      radial-gradient(at 80% 20%, rgba(37, 84, 232, 0.12) 0px, transparent 50%),
+      radial-gradient(at 20% 80%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(255, 255, 255, 0.9) 0px, transparent 70%);
+  }
+
+  .bg-grid-subtle {
+    background-image:
+      linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .ring-premium {
+    @apply ring-1 ring-slate-900/[0.04];
+  }
+}
