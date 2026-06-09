@@ -73,6 +73,19 @@ export function isPlatformHostname(hostname, baseDomains = ['localhost']) {
   return false;
 }
 
+export function supportsTenantSubdomains(baseDomain) {
+  const base = String(baseDomain || '')
+    .trim()
+    .toLowerCase();
+
+  if (!base || base === 'localhost') return true;
+
+  // Railway: DNS wildcard pode resolver, mas o certificado SSL não cobre subdomínios da loja.
+  if (base.endsWith('.railway.app')) return false;
+
+  return true;
+}
+
 export function buildTenantStoreUrl(tenantId, { protocol, hostname, port, baseDomains } = {}) {
   const resolvedProtocol = protocol || 'http:';
   const resolvedPort = port ? `:${port}` : '';
@@ -83,5 +96,11 @@ export function buildTenantStoreUrl(tenantId, { protocol, hostname, port, baseDo
     return `${resolvedProtocol}//${baseDomain}${resolvedPort}/`;
   }
 
-  return `${resolvedProtocol}//${tenantId}.${baseDomain}${resolvedPort}/`;
+  if (supportsTenantSubdomains(baseDomain)) {
+    return `${resolvedProtocol}//${tenantId}.${baseDomain}${resolvedPort}/`;
+  }
+
+  const url = new URL(`${resolvedProtocol}//${baseDomain}${resolvedPort}/`);
+  url.searchParams.set('loja', tenantId);
+  return url.toString();
 }

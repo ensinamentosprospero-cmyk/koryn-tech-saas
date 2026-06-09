@@ -217,8 +217,8 @@ function CreateTenantForm({ onCreated }) {
       >
         <h2 className="text-sm font-bold text-white">Nova loja</h2>
         <p className="mt-1 text-xs text-slate-400">
-          Cria loja + dono + trial 14 dias. URL: subdomínio ou{' '}
-          <code className="text-brand-300">?loja=id</code>
+          Cria loja + dono + trial 14 dias. Link público:{' '}
+          <code className="text-brand-300">?loja=id</code> (Railway) ou subdomínio com domínio próprio.
         </p>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">

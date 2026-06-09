@@ -83,6 +83,8 @@ Variáveis já configuradas: `NODE_ENV`, `SERVE_STATIC`, `JWT_SECRET`, `APP_BASE
 - Resolvido em `src/tenant/resolveTenant.js` + `src/tenant/resolveTenantFromHost.js`
 - **Prioridade:** `?loja=` / `?tenant=` → subdomínio → `sessionStorage` → `default`
 - Subdomínio dev: `http://demo.localhost:5173` (funciona sem editar hosts no Windows)
+- **Railway (produção):** use `?loja=id` — subdomínios `.railway.app` falham no SSL do Chrome
+- Subdomínio produção: só com domínio próprio + wildcard DNS (`*.seudominio.com`)
 - Plataforma: `/platform` ou `http://platform.localhost:5173`
 - Default: `default` (loja Koryn Tech original — `localhost:5173` ou domínio raiz)
 - Variável opcional: `VITE_TENANT_BASE_DOMAINS=localhost,seudominio.com` (`.env`)
