@@ -251,40 +251,42 @@ export default function SiteAdminPanel({ open, onClose }) {
                   </div>
                 </div>
               </div>
+            </header>
 
-              <div className="border-t border-slate-100 px-4 py-3 lg:hidden">
-                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                {ADMIN_MOBILE_NAV.map((item) => {
-                  const active = activePage === item.id;
+            <main className="min-h-0 flex-1 overflow-y-auto">
+              <div className={`mx-auto w-full ${contentMaxWidth} px-4 py-5 sm:px-6 sm:py-6`}>
+                <div className="mb-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:hidden">
+                  {ADMIN_MOBILE_NAV.map((item) => {
+                    const active = activePage === item.id;
 
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => setActivePage(item.id)}
-                      className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-bold transition ${
-                        active
-                          ? 'bg-brand-600 text-white shadow-glow-brand'
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
-                    >
-                      <Icon name={item.icon} className="h-3.5 w-3.5" filled={item.icon === 'whatsapp' && active} />
-                      {item.label}
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setActivePage(item.id)}
+                        className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-xs font-bold transition ${
+                          active
+                            ? 'bg-brand-600 text-white shadow-glow-brand'
+                            : 'bg-slate-100 text-slate-600'
+                        }`}
+                      >
+                        <Icon
+                          name={item.icon}
+                          className="h-3.5 w-3.5"
+                          filled={item.icon === 'whatsapp' && active}
+                        />
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="mb-5 w-full">
+                  <AdminDescriptionLine description={page.description} onSave={handleSave} />
+                </div>
+                {renderPage(activePage, setActivePage)}
               </div>
-            </div>
-          </header>
-
-          <main className="min-h-0 flex-1 overflow-y-auto">
-            <div className={`mx-auto w-full ${contentMaxWidth} px-4 py-5 sm:px-6 sm:py-6`}>
-              <div className="mb-5 w-full">
-                <AdminDescriptionLine description={page.description} onSave={handleSave} />
-              </div>
-              {renderPage(activePage, setActivePage)}
-            </div>
-          </main>
+            </main>
           </div>
         </div>
       </aside>
