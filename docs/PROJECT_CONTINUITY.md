@@ -62,16 +62,19 @@ Sistema SaaS multi-tenant para lojistas de eletrônicos personalizarem sua loja 
 Variáveis já configuradas: `NODE_ENV`, `SERVE_STATIC`, `JWT_SECRET`, `APP_BASE_URL`, `VITE_TENANT_BASE_DOMAINS`, `STORE_DB_PATH`, `BILLING_PROVIDER=manual`.
 
 **Próximo passo prioritário:**
-1. **Onboarding + billing lojista** — ✅ criar loja com dono/senha/trial; painel admin → Assinatura
-2. **Dashboard plataforma** — ✅ visão geral, métricas, filtros, drawer de detalhes
-3. **Aprimoramentos SaaS** — categorias configuráveis, upload imagens (opcional)
+1. **Template SaaS + multi-tenant** — ✅ modelos, status do site, config dinâmica
+2. **Upload de imagens** — Supabase Storage ou CDN (URLs manuais já funcionam)
+3. **Stripe live** — `BILLING_PROVIDER=stripe` + chaves
+4. **Domínio custom** — wildcard para subdomínios por loja
 
-**Concluído recentemente:**
-- Supabase dedicado `qjynmumyoypzvqdaznnn` + Railway
-- Onboarding: e-mail dono, senha gerada, credenciais na plataforma
-- Billing lojista: trial, planos Starter/Pro, checkout manual/Stripe
-- Painel plataforma: sidebar (Visão geral / Lojas / Nova loja), stats MRR/trial, busca/filtros, drawer com assinatura e ações
-- URLs Railway: `/loja/id` (fix SSL subdomínio)
+**Concluído nesta etapa:**
+- Tabela `site_templates` + seed do modelo `koryn-electronics-v1` (snapshot da loja default)
+- Colunas em `tenants`: `template_id`, `status` (draft/active/suspended), `client_name`, `client_email`
+- Novas lojas clonam o template escolhido (não nascem vazias)
+- Config dinâmica: categorias, tema (cores), logo/banner/endereço, textos das seções
+- Painel lojista: Identidade, Tema, Categorias, Textos, URLs de imagem em produtos/ofertas
+- Painel plataforma: escolher modelo, status do site, publicar/suspender
+- Bloqueio: site suspenso ou assinatura inativa → loja pública e edição bloqueadas
 3. Stripe live (`BILLING_PROVIDER=stripe` + chaves)
 4. Nginx/Caddy na VPS com HTTPS (alternativa ao Railway)
 5. **Não** alterar layout da loja pública
@@ -406,4 +409,4 @@ TenantProvider
 
 ---
 
-*Última atualização: dashboard plataforma aprimorado — métricas, filtros e drawer de lojas.*
+*Última atualização: template SaaS reutilizável — modelos, status do site, config dinâmica por tenant.*

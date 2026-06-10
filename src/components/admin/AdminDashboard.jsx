@@ -45,7 +45,7 @@ export default function AdminDashboard({ onNavigate }) {
           <div className="relative flex items-start justify-between gap-4">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-brand-300">
-                Painel Koryn Tech
+                Painel administrativo
               </p>
               <h3 className="mt-2 text-2xl font-extrabold tracking-tight">{store.name}</h3>
               <p className="mt-1 text-sm text-slate-300">{store.tagline}</p>

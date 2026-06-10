@@ -9,6 +9,7 @@ import {
   fetchRemoteStoreConfig,
   persistRemoteStoreConfig,
   SubscriptionBlockedError,
+  SiteBlockedError,
 } from './remoteStoreConfigAdapter';
 
 export { DEFAULT_TENANT_ID, LEGACY_STORE_CONFIG_KEY, getStoreConfigStorageKey } from './storeConfigKeys';
@@ -31,7 +32,7 @@ export async function loadStoreConfig(tenantId = DEFAULT_TENANT_ID) {
       return normalized;
     }
   } catch (error) {
-    if (error instanceof SubscriptionBlockedError) {
+    if (error instanceof SubscriptionBlockedError || error instanceof SiteBlockedError) {
       throw error;
     }
     console.warn('Usando cache local da loja:', error.message);

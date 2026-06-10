@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CATEGORY_TAGS } from '../../data/siteData';
 import { useSiteConfig } from '../../context/SiteConfigContext';
 import Icon from '../Icon';
 import {
@@ -110,6 +109,13 @@ export function AdminOffersEditor() {
               checked={offer.deliveryEnabled !== false}
               onChange={(value) => updateOffer(offer.id, { deliveryEnabled: value })}
             />
+            <ConfigField label="Imagem (URL)">
+              <ConfigInput
+                value={offer.image || ''}
+                onChange={(value) => updateOffer(offer.id, { image: value })}
+                placeholder="/offers/kit-carregamento.jpg"
+              />
+            </ConfigField>
             <ConfigField label="Nome">
               <ConfigInput
                 value={offer.name}

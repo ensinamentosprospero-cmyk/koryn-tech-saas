@@ -1,6 +1,22 @@
-import { DEFAULT_AUTH, FAQS, OFFERS, STORE } from './siteData';
+import { DEFAULT_AUTH, FAQS, NAV_LINKS, OFFERS, STORE, CATEGORY_TAGS } from './siteData';
 import { PRODUCTS } from './products';
 import { generalMessage } from '../utils/whatsapp';
+
+const DEFAULT_THEME = {
+  primaryColor: '#2554e8',
+  secondaryColor: '#1d42d4',
+};
+
+const DEFAULT_COPY = {
+  sectionOffers: 'Ofertas da semana',
+  sectionOffersSubtitle: 'Compre o kit e economize',
+  sectionProducts: 'Produtos',
+  sectionFaq: 'Dúvidas frequentes',
+  sectionCtaTitle: 'Pronto para comprar?',
+  sectionCtaSubtitle: 'Fale com a {storeName} pelo WhatsApp.',
+  sectionCtaButton: 'Chamar no WhatsApp',
+  navLinks: NAV_LINKS,
+};
 
 export function createDefaultStoreConfig() {
   return {
@@ -12,10 +28,19 @@ export function createDefaultStoreConfig() {
       instagram: STORE.instagram,
       instagramUrl: STORE.instagramUrl,
       city: STORE.city,
+      address: STORE.city,
       hours: STORE.hours,
       description: STORE.description,
       deliveryTitle: STORE.deliveryTitle,
       deliveryDescription: STORE.deliveryDescription,
+      logoUrl: '',
+      bannerUrl: '',
+    },
+    categories: [...CATEGORY_TAGS],
+    theme: { ...DEFAULT_THEME },
+    copy: {
+      ...DEFAULT_COPY,
+      navLinks: NAV_LINKS.map((link) => ({ ...link })),
     },
     messages: {
       general: generalMessage,
@@ -97,6 +122,32 @@ function normalizeAnalytics(analytics) {
   };
 }
 
+function normalizeCategories(categories, defaults) {
+  if (!Array.isArray(categories) || categories.length === 0) return defaults;
+  return categories.map((item) => String(item || '').trim()).filter(Boolean);
+}
+
+function normalizeTheme(theme, defaults) {
+  return {
+    primaryColor: theme?.primaryColor || defaults.primaryColor,
+    secondaryColor: theme?.secondaryColor || defaults.secondaryColor,
+  };
+}
+
+function normalizeCopy(copy, defaults) {
+  const navLinks = Array.isArray(copy?.navLinks) && copy.navLinks.length > 0 ? copy.navLinks : defaults.navLinks;
+
+  return {
+    ...defaults,
+    ...copy,
+    navLinks: navLinks.map((link) => ({
+      label: link.label || '',
+      href: link.href || '#',
+      section: link.section || '',
+    })),
+  };
+}
+
 export function normalizeStoreConfig(config) {
   const defaults = createDefaultStoreConfig();
   const sections = { ...defaults.sections, ...(config.sections || {}) };
@@ -110,6 +161,9 @@ export function normalizeStoreConfig(config) {
     ...defaults,
     ...config,
     store: { ...defaults.store, ...(config.store || {}) },
+    categories: normalizeCategories(config.categories, defaults.categories),
+    theme: normalizeTheme(config.theme, defaults.theme),
+    copy: normalizeCopy(config.copy, defaults.copy),
     messages: { ...defaults.messages, ...(config.messages || {}) },
     sections,
     productsPerPage: config.productsPerPage ?? defaults.productsPerPage,
@@ -124,6 +178,9 @@ export function normalizeStoreConfig(config) {
 export function mergeStoredStoreConfig(parsed) {
   return normalizeStoreConfig({
     store: parsed.store,
+    categories: parsed.categories,
+    theme: parsed.theme,
+    copy: parsed.copy,
     messages: parsed.messages,
     sections: parsed.sections,
     productsPerPage: parsed.productsPerPage,

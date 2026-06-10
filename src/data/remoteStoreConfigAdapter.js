@@ -2,6 +2,14 @@ import { buildApiUrl } from '../config/api';
 import { buildAuthHeaders } from '../utils/authTokenStorage';
 import { normalizeStoreConfig } from './storeConfigSchema';
 
+export class SiteBlockedError extends Error {
+  constructor(message, code = 'SITE_SUSPENDED') {
+    super(message);
+    this.name = 'SiteBlockedError';
+    this.code = code;
+  }
+}
+
 export class SubscriptionBlockedError extends Error {
   constructor(message, subscription) {
     super(message);
@@ -23,6 +31,9 @@ export async function fetchRemoteStoreConfig(tenantId) {
         payload.error || 'Assinatura inativa.',
         payload.subscription
       );
+    }
+    if (payload.code === 'SITE_SUSPENDED' || payload.code === 'SITE_INACCESSIBLE') {
+      throw new SiteBlockedError(payload.error || 'Site suspenso.');
     }
   }
 

@@ -7,7 +7,7 @@ import { Container, Section, SectionHeader } from './UI';
 const PAGE_SIZE = 6;
 
 export default function ProductsSection({ onProductDetails }) {
-  const { activeProducts, productsPerPage } = useSiteConfig();
+  const { activeProducts, productsPerPage, copy } = useSiteConfig();
   const pageSize = productsPerPage || PAGE_SIZE;
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -29,7 +29,7 @@ export default function ProductsSection({ onProductDetails }) {
   return (
     <Section id="produtos" className="bg-white" ariaLabel="Produtos">
       <Container>
-        <SectionHeader title="Produtos" size="large" gradient />
+        <SectionHeader title={copy.sectionProducts} size="large" gradient />
 
         <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-muted">

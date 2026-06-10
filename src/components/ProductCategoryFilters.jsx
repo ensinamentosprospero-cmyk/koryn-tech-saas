@@ -1,9 +1,7 @@
-import { CATEGORY_TAGS } from '../data/siteData';
-
-export default function ProductCategoryFilters({ activeCategory, onCategoryChange }) {
+export default function ProductCategoryFilters({ categories = [], activeCategory, onCategoryChange }) {
   return (
     <div className="flex flex-wrap justify-center gap-2">
-      {CATEGORY_TAGS.map((tag) => {
+      {categories.map((tag) => {
         const isActive = activeCategory === tag;
 
         return (

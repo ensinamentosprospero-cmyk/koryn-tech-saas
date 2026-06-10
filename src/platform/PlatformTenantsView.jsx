@@ -10,6 +10,8 @@ import {
   filterTenants,
   formatDate,
   formatDateTime,
+  siteStatusBadgeClass,
+  siteStatusLabel,
   subscriptionBadgeClass,
   subscriptionLabel,
   storeBadgeClass,
@@ -118,6 +120,18 @@ function TenantDetailDrawer({ tenant, onClose, onUpdated }) {
             <h3 className="text-xs font-bold uppercase tracking-wide text-slate-500">Assinatura</h3>
             <dl className="mt-3 space-y-3 text-sm">
               <div>
+                <dt className="text-xs text-slate-500">Status do site</dt>
+                <dd className="mt-0.5 text-white">{siteStatusLabel(tenant.status)}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-500">Modelo</dt>
+                <dd className="mt-0.5 text-white">{tenant.templateId || 'koryn-electronics-v1'}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-slate-500">Cliente</dt>
+                <dd className="mt-0.5 text-white">{tenant.clientName || tenant.name}</dd>
+              </div>
+              <div>
                 <dt className="text-xs text-slate-500">Plano</dt>
                 <dd className="mt-0.5 text-white">
                   {tenant.subscription?.planName || tenant.subscription?.planId || '—'}
@@ -203,6 +217,50 @@ function TenantDetailDrawer({ tenant, onClose, onUpdated }) {
               {tenant.active ? 'Desativar loja' : 'Ativar loja'}
             </button>
           </div>
+
+          {!isDefault && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                disabled={Boolean(busy)}
+                onClick={() =>
+                  runAction('status-active', async () => {
+                    const updated = await updateTenant(tenant.id, { status: 'active' });
+                    onUpdated({ ...tenant, ...updated });
+                  })
+                }
+                className="rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-white/5 disabled:opacity-60"
+              >
+                Publicar (ativo)
+              </button>
+              <button
+                type="button"
+                disabled={Boolean(busy)}
+                onClick={() =>
+                  runAction('status-draft', async () => {
+                    const updated = await updateTenant(tenant.id, { status: 'draft' });
+                    onUpdated({ ...tenant, ...updated });
+                  })
+                }
+                className="rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-white/5 disabled:opacity-60"
+              >
+                Rascunho
+              </button>
+              <button
+                type="button"
+                disabled={Boolean(busy)}
+                onClick={() =>
+                  runAction('status-suspended', async () => {
+                    const updated = await updateTenant(tenant.id, { status: 'suspended' });
+                    onUpdated({ ...tenant, ...updated });
+                  })
+                }
+                className="rounded-xl border border-red-500/30 px-3 py-2 text-xs font-semibold text-red-300 hover:bg-red-500/10 disabled:opacity-60"
+              >
+                Suspender site
+              </button>
+            </div>
+          )}
 
           {!isDefault && (
             <div className="flex flex-wrap gap-2">
@@ -362,6 +420,7 @@ export default function PlatformTenantsView({
                 <tr>
                   <th className="px-4 py-3 font-semibold">Loja</th>
                   <th className="px-4 py-3 font-semibold">Dono</th>
+                  <th className="px-4 py-3 font-semibold">Site</th>
                   <th className="px-4 py-3 font-semibold">Assinatura</th>
                   <th className="px-4 py-3 font-semibold">Trial / cobrança</th>
                   <th className="px-4 py-3 font-semibold">Status</th>
@@ -392,6 +451,13 @@ export default function PlatformTenantsView({
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-300">
                         {tenant.ownerEmail || '—'}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ring-1 ${siteStatusBadgeClass(tenant.status)}`}
+                        >
+                          {siteStatusLabel(tenant.status)}
+                        </span>
                       </td>
                       <td className="px-4 py-3">
                         <span

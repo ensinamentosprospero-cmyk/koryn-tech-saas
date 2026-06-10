@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --store-brand-600: #2554e8;
+    --store-brand-700: #1d42d4;
+    --store-brand-800: #1e36ab;
+  }
+
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 5.5rem;

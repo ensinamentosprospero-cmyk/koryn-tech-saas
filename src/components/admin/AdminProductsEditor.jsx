@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CATEGORY_TAGS } from '../../data/siteData';
 import { useSiteConfig } from '../../context/SiteConfigContext';
 import Icon from '../Icon';
 import {
@@ -116,6 +115,8 @@ function ProductListItem({ product, selected, onSelect, onToggleActive }) {
 }
 
 function ProductEditorForm({ draft, onDraftChange, onSave, saveStatus, onDelete, onBack }) {
+  const { categories } = useSiteConfig();
+
   if (!draft) {
     return (
       <AdminPanel className="flex h-full min-h-[320px] flex-col items-center justify-center text-center">
@@ -213,7 +214,7 @@ function ProductEditorForm({ draft, onDraftChange, onSave, saveStatus, onDelete,
 
           <ConfigField label="Categoria">
             <div className="flex flex-wrap gap-2">
-              {CATEGORY_TAGS.map((category) => {
+              {categories.map((category) => {
                 const active = draft.category === category;
 
                 return (
@@ -259,6 +260,14 @@ function ProductEditorForm({ draft, onDraftChange, onSave, saveStatus, onDelete,
                 );
               })}
             </div>
+          </ConfigField>
+
+          <ConfigField label="Foto (URL)">
+            <ConfigInput
+              value={draft.photo || ''}
+              onChange={(value) => patch({ photo: value, photoAlt: draft.name })}
+              placeholder="/products/celulares-1.jpg"
+            />
           </ConfigField>
 
           <ConfigField label="Descrição curta">
@@ -324,7 +333,7 @@ function cloneProduct(product) {
 }
 
 export default function AdminProductsEditor() {
-  const { products, updateProduct, addProduct, removeProduct, saveSettings, registerSaveHandler } =
+  const { products, categories, updateProduct, addProduct, removeProduct, saveSettings, registerSaveHandler } =
     useSiteConfig();
   const [selectedId, setSelectedId] = useState(null);
   const [search, setSearch] = useState('');
@@ -474,7 +483,7 @@ export default function AdminProductsEditor() {
         </div>
 
         <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-          {['Todos', ...CATEGORY_TAGS].map((category) => {
+          {['Todos', ...categories].map((category) => {
             const active = categoryFilter === category;
 
             return (

@@ -2,6 +2,20 @@ CREATE TABLE IF NOT EXISTS tenants (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
   active INTEGER NOT NULL DEFAULT 1,
+  template_id TEXT,
+  status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('draft', 'active', 'suspended')),
+  client_name TEXT,
+  client_email TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS site_templates (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL DEFAULT '',
+  config_json TEXT NOT NULL,
+  active INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

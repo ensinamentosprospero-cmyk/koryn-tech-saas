@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { createTenant } from './platformApi.js';
+import { useEffect, useState } from 'react';
+import { createTenant, fetchSiteTemplates } from './platformApi.js';
 import OnboardingSuccessModal from './OnboardingSuccessModal.jsx';
 
 export default function CreateTenantForm({ onCreated }) {
@@ -8,9 +8,18 @@ export default function CreateTenantForm({ onCreated }) {
   const [ownerEmail, setOwnerEmail] = useState('');
   const [ownerPassword, setOwnerPassword] = useState('');
   const [autoPassword, setAutoPassword] = useState(true);
+  const [templateId, setTemplateId] = useState('koryn-electronics-v1');
+  const [status, setStatus] = useState('draft');
+  const [templates, setTemplates] = useState([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [onboarding, setOnboarding] = useState(null);
+
+  useEffect(() => {
+    fetchSiteTemplates()
+      .then(setTemplates)
+      .catch(() => setTemplates([]));
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,6 +32,9 @@ export default function CreateTenantForm({ onCreated }) {
         name,
         ownerEmail,
         ownerPassword: autoPassword ? undefined : ownerPassword,
+        templateId,
+        status,
+        clientName: name,
       });
 
       setId('');
@@ -90,6 +102,40 @@ export default function CreateTenantForm({ onCreated }) {
               placeholder="dono@minhaloja.com"
               className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
             />
+          </label>
+
+          <label className="block sm:col-span-2">
+            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Modelo do site
+            </span>
+            <select
+              value={templateId}
+              onChange={(event) => setTemplateId(event.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
+            >
+              {(templates.length ? templates : [{ id: 'koryn-electronics-v1', name: 'Koryn Eletrônicos' }]).map(
+                (template) => (
+                  <option key={template.id} value={template.id}>
+                    {template.name}
+                  </option>
+                )
+              )}
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Status inicial
+            </span>
+            <select
+              value={status}
+              onChange={(event) => setStatus(event.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none ring-brand-500 focus:ring-2"
+            >
+              <option value="draft">Rascunho (demonstração)</option>
+              <option value="active">Ativo</option>
+              <option value="suspended">Suspenso</option>
+            </select>
           </label>
 
           <label className="flex items-center gap-2 sm:col-span-2">

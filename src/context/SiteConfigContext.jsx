@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { CATEGORY_TAGS } from '../data/siteData';
 import { createDefaultStoreConfig } from '../data/storeConfigSchema';
 import {
   loadStoreConfig,
@@ -7,6 +6,7 @@ import {
   saveStoreConfig,
   saveStoreConfigSync,
 } from '../data/storeConfigRepository';
+import { applyStoreTheme } from '../utils/applyStoreTheme.js';
 import { useTenant } from './TenantContext';
 
 const PAGE_VIEW_SESSION_KEY = 'koryn-tech-page-view-tracked';
@@ -18,6 +18,7 @@ export function SiteConfigProvider({ children }) {
   const [config, setConfig] = useState(() => loadStoreConfigSync(tenantId));
   const [configReady, setConfigReady] = useState(false);
   const [subscriptionBlocked, setSubscriptionBlocked] = useState(false);
+  const [siteBlocked, setSiteBlocked] = useState(false);
   const configRef = useRef(config);
   configRef.current = config;
   const pendingSaveHandlersRef = useRef(new Set());
@@ -28,6 +29,7 @@ export function SiteConfigProvider({ children }) {
     setConfig(loadStoreConfigSync(tenantId));
     setConfigReady(false);
     setSubscriptionBlocked(false);
+    setSiteBlocked(false);
 
     loadStoreConfig(tenantId)
       .then((loadedConfig) => {
@@ -39,6 +41,11 @@ export function SiteConfigProvider({ children }) {
         if (cancelled) return;
         if (error?.code === 'SUBSCRIPTION_INACTIVE') {
           setSubscriptionBlocked(true);
+          setConfigReady(true);
+          return;
+        }
+        if (error?.code === 'SITE_SUSPENDED' || error?.name === 'SiteBlockedError') {
+          setSiteBlocked(true);
           setConfigReady(true);
           return;
         }
@@ -70,6 +77,40 @@ export function SiteConfigProvider({ children }) {
       });
     },
     [tenantId]
+  );
+
+  useEffect(() => {
+    applyStoreTheme(config.theme);
+  }, [config.theme]);
+
+  const updateTheme = useCallback(
+    (field, value) => {
+      persist((previous) => ({
+        ...previous,
+        theme: { ...previous.theme, [field]: value },
+      }));
+    },
+    [persist]
+  );
+
+  const updateCopy = useCallback(
+    (field, value) => {
+      persist((previous) => ({
+        ...previous,
+        copy: { ...previous.copy, [field]: value },
+      }));
+    },
+    [persist]
+  );
+
+  const updateCategories = useCallback(
+    (categories) => {
+      persist((previous) => ({
+        ...previous,
+        categories: Array.isArray(categories) ? categories : previous.categories,
+      }));
+    },
+    [persist]
   );
 
   const updateStore = useCallback(
@@ -195,7 +236,7 @@ export function SiteConfigProvider({ children }) {
           ...previous.products,
           {
             id: nextId,
-            category: 'Celulares',
+            category: previous.categories[0] || 'Geral',
             image: 'smartphone',
             name: 'Novo produto',
             price: 'R$ 0,00',
@@ -399,7 +440,7 @@ export function SiteConfigProvider({ children }) {
   );
 
   const dashboardStats = useMemo(() => {
-    const productsByCategory = CATEGORY_TAGS.map((category) => ({
+    const productsByCategory = config.categories.map((category) => ({
       category,
       total: config.products.filter((product) => product.category === category).length,
       active: activeProducts.filter((product) => product.category === category).length,
@@ -431,8 +472,12 @@ export function SiteConfigProvider({ children }) {
       config,
       configReady,
       subscriptionBlocked,
+      siteBlocked,
       tenantId,
       store: config.store,
+      categories: config.categories,
+      theme: config.theme,
+      copy: config.copy,
       auth: config.auth,
       messages: config.messages,
       sections: config.sections,
@@ -446,6 +491,9 @@ export function SiteConfigProvider({ children }) {
       analytics: config.analytics,
       dashboardStats,
       updateStore,
+      updateTheme,
+      updateCopy,
+      updateCategories,
       updateAuth,
       registerUserAccount,
       updateMessages,
@@ -473,6 +521,7 @@ export function SiteConfigProvider({ children }) {
       config,
       configReady,
       subscriptionBlocked,
+      siteBlocked,
       dashboardStats,
       resetConfig,
       saveSettings,
@@ -493,6 +542,9 @@ export function SiteConfigProvider({ children }) {
       updateAuth,
       registerUserAccount,
       updateStore,
+      updateTheme,
+      updateCopy,
+      updateCategories,
       whatsAppLink,
     ]
   );

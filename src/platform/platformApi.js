@@ -27,11 +27,11 @@ export async function fetchAllTenants() {
   return payload.tenants ?? [];
 }
 
-export async function createTenant({ id, name, ownerEmail, ownerPassword }) {
+export async function createTenant({ id, name, ownerEmail, ownerPassword, templateId, status, clientName }) {
   const response = await fetch(buildApiUrl('/tenants'), {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ id, name, ownerEmail, ownerPassword }),
+    body: JSON.stringify({ id, name, ownerEmail, ownerPassword, templateId, status, clientName }),
   });
 
   return parseJsonResponse(response);
@@ -82,4 +82,13 @@ export async function fetchPlatformHealth() {
   });
 
   return parseJsonResponse(response);
+}
+
+export async function fetchSiteTemplates() {
+  const response = await fetch(buildApiUrl('/templates'), {
+    headers: authHeaders(),
+  });
+
+  const payload = await parseJsonResponse(response);
+  return payload.templates ?? [];
 }

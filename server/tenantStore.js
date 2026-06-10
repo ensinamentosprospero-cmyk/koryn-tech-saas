@@ -1,13 +1,16 @@
 import {
   bootstrapDatabase,
   createTenant,
+  getTenantRecord,
   isKnownTenant,
+  isTenantSiteAccessible,
   listAllTenants,
   listTenants,
   readTenantConfig,
   updateTenant,
   writeTenantConfig,
 } from './db/tenantRepository.js';
+import { listSiteTemplates } from './db/templateRepository.js';
 
 export {
   getSubscriptionPlan,
@@ -24,10 +27,13 @@ export async function bootstrapTenantStore() {
 
 export {
   createTenant,
+  getTenantRecord,
+  isKnownTenant,
+  isTenantSiteAccessible,
   listAllTenants,
+  listSiteTemplates,
   listTenants,
   readTenantConfig,
   updateTenant,
   writeTenantConfig,
-  isKnownTenant,
 };

@@ -11,8 +11,11 @@ import {
   AdminDeliverySettings,
   AdminMessagesSettings,
   AdminAccessSettings,
+  AdminCategoriesSettings,
+  AdminCopySettings,
   AdminSectionsSettings,
   AdminStoreSettings,
+  AdminThemeSettings,
 } from './admin/AdminSettingsSections';
 
 function AdminDescriptionLine({ description, onSave, className = '' }) {
@@ -122,6 +125,12 @@ function renderPage(page, onNavigate) {
       return <AdminBillingSettings />;
     case 'loja':
       return <AdminStoreSettings />;
+    case 'tema':
+      return <AdminThemeSettings />;
+    case 'categorias':
+      return <AdminCategoriesSettings />;
+    case 'textos':
+      return <AdminCopySettings />;
     case 'contato':
       return <AdminContactSettings />;
     case 'entrega':

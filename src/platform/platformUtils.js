@@ -1,4 +1,20 @@
-const STATUS_LABELS = {
+const SITE_STATUS_LABELS = {
+  draft: 'Rascunho',
+  active: 'Ativo',
+  suspended: 'Suspenso',
+};
+
+export function siteStatusLabel(status) {
+  return SITE_STATUS_LABELS[status] || status || '—';
+}
+
+export function siteStatusBadgeClass(status) {
+  if (status === 'active') return 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/20';
+  if (status === 'draft') return 'bg-amber-500/15 text-amber-300 ring-amber-500/20';
+  return 'bg-red-500/15 text-red-300 ring-red-500/20';
+}
+
+const SUBSCRIPTION_STATUS_LABELS = {
   trialing: 'Trial',
   active: 'Ativa',
   past_due: 'Atrasada',
@@ -50,7 +66,7 @@ export function subscriptionLabel(tenant) {
   const subscription = tenant.subscription;
   if (!subscription) return 'Sem plano';
 
-  const status = STATUS_LABELS[subscription.status] || subscription.status;
+  const status = SUBSCRIPTION_STATUS_LABELS[subscription.status] || subscription.status;
   return `${subscription.planName || subscription.planId} · ${status}`;
 }
 

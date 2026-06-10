@@ -64,7 +64,7 @@ function OfferCard({ offer, onDetails, whatsAppLink, onWhatsAppClick }) {
 }
 
 export default function OffersSection({ onOfferDetails }) {
-  const { activeOffers, whatsAppLink, trackEvent } = useSiteConfig();
+  const { activeOffers, copy, whatsAppLink, trackEvent } = useSiteConfig();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -102,7 +102,7 @@ export default function OffersSection({ onOfferDetails }) {
       ariaLabel="Ofertas especiais"
     >
       <Container>
-        <SectionHeader title="Ofertas da semana" light />
+        <SectionHeader title={copy.sectionOffers} subtitle={copy.sectionOffersSubtitle} light />
 
         <div
           className="relative px-10 sm:px-14"

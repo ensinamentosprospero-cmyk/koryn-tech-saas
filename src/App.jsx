@@ -19,7 +19,8 @@ import { Container } from './components/UI';
 import { useSiteConfig } from './context/SiteConfigContext';
 
 export default function App() {
-  const { sections, products, offers, trackEvent, subscriptionBlocked, configReady } = useSiteConfig();
+  const { sections, products, offers, trackEvent, subscriptionBlocked, siteBlocked, configReady, categories } =
+    useSiteConfig();
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedOfferId, setSelectedOfferId] = useState(null);
   const [paymentItem, setPaymentItem] = useState(null);
@@ -49,13 +50,15 @@ export default function App() {
     trackEventRef.current('pageView');
   }, []);
 
-  if (configReady && subscriptionBlocked) {
+  if (configReady && (subscriptionBlocked || siteBlocked)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
         <div className="max-w-md rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-soft">
           <h1 className="text-lg font-extrabold text-slate-900">Loja temporariamente indisponível</h1>
           <p className="mt-2 text-sm text-slate-600">
-            A assinatura desta loja não está ativa. Entre em contato com o lojista ou renove o plano.
+            {siteBlocked
+              ? 'Este site está suspenso. Entre em contato com o suporte.'
+              : 'A assinatura desta loja não está ativa. Entre em contato com o lojista ou renove o plano.'}
           </p>
         </div>
       </div>
@@ -105,6 +108,7 @@ export default function App() {
         <div className="fixed inset-x-0 top-[4.25rem] z-40 border-b border-slate-200/80 bg-white py-3 sm:py-4">
           <Container>
             <ProductCategoryFilters
+              categories={categories}
               activeCategory={selectedCategory}
               onCategoryChange={handleCategoryChange}
             />

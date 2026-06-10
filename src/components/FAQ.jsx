@@ -26,13 +26,13 @@ function FAQItem({ faq, isOpen, onToggle }) {
 }
 
 export default function FAQ() {
-  const { activeFaqs } = useSiteConfig();
+  const { activeFaqs, copy } = useSiteConfig();
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
     <Section id="faq" className="bg-surface" ariaLabel="Perguntas frequentes">
       <Container>
-        <SectionHeader title="Dúvidas frequentes" />
+        <SectionHeader title={copy.sectionFaq} />
 
         <div className="mx-auto max-w-2xl space-y-2">
           {activeFaqs.map((faq, index) => (

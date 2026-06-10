@@ -2,7 +2,9 @@ import http from 'node:http';
 import {
   bootstrapTenantStore,
   createTenant,
-  isKnownTenant,
+  getTenantRecord,
+  isTenantSiteAccessible,
+  listSiteTemplates,
   listTenants,
   readTenantConfig,
   updateTenant,
@@ -31,6 +33,7 @@ import {
   registerUser,
 } from './auth/authService.js';
 import { getUserData, saveUserData as saveUserDataRecord } from './db/userDataRepository.js';
+import { SITE_STATUSES } from './db/saasConstants.js';
 import { env, getDatabaseDriver, getPublicConfig, validateProductionEnv } from './config/env.js';
 import { canServeStatic, getDistDir, serveStatic } from './staticServer.js';
 
@@ -198,6 +201,21 @@ const server = http.createServer(async (request, response) => {
       return;
     }
 
+    if (url.pathname === '/api/templates' && request.method === 'GET') {
+      const user = await getUserFromRequest(request);
+      const includeInactive = url.searchParams.get('all') === '1';
+
+      if (includeInactive && !hasRole(user, [ROLES.PLATFORM_ADMIN])) {
+        sendJson(response, 403, { error: 'Permissão insuficiente.' });
+        return;
+      }
+
+      sendJson(response, 200, {
+        templates: await listSiteTemplates(includeInactive),
+      });
+      return;
+    }
+
     if (url.pathname === '/api/tenants') {
       if (request.method === 'GET') {
         const includeInactive = url.searchParams.get('all') === '1';
@@ -224,6 +242,9 @@ const server = http.createServer(async (request, response) => {
           name: body?.name,
           ownerEmail: body?.ownerEmail,
           ownerPassword: body?.ownerPassword,
+          templateId: body?.templateId,
+          status: body?.status,
+          clientName: body?.clientName,
         });
 
         if (result.error) {
@@ -249,6 +270,10 @@ const server = http.createServer(async (request, response) => {
       const result = await updateTenant(tenantId, {
         name: body?.name,
         active: body?.active,
+        status: body?.status,
+        templateId: body?.templateId,
+        clientName: body?.clientName,
+        clientEmail: body?.clientEmail,
       });
 
       if (result.error) {
@@ -346,6 +371,21 @@ const server = http.createServer(async (request, response) => {
     const configMatch = url.pathname.match(/^\/api\/tenants\/([^/]+)\/config$/);
     if (configMatch) {
       const tenantId = decodeURIComponent(configMatch[1]);
+      const tenant = await getTenantRecord(tenantId);
+
+      if (!tenant || !tenant.active) {
+        sendJson(response, 404, { error: 'Tenant não encontrado.' });
+        return;
+      }
+
+      if (tenant.status === SITE_STATUSES.SUSPENDED) {
+        sendJson(response, 403, {
+          error: 'Site suspenso. Entre em contato com o suporte.',
+          code: 'SITE_SUSPENDED',
+          tenantId,
+        });
+        return;
+      }
 
       if (!(await isTenantSubscriptionActive(tenantId))) {
         sendJson(response, 403, {
@@ -357,13 +397,6 @@ const server = http.createServer(async (request, response) => {
         return;
       }
 
-      const tenants = await listTenants();
-
-      if (!(await isKnownTenant(tenantId, tenants))) {
-        sendJson(response, 404, { error: 'Tenant não encontrado.' });
-        return;
-      }
-
       if (request.method === 'GET') {
         const config = await readTenantConfig(tenantId);
         if (!config) {
@@ -371,7 +404,7 @@ const server = http.createServer(async (request, response) => {
           return;
         }
 
-        sendJson(response, 200, { tenantId, config });
+        sendJson(response, 200, { tenantId, config, site: tenant });
         return;
       }
 
@@ -379,6 +412,15 @@ const server = http.createServer(async (request, response) => {
         const user = await getUserFromRequest(request);
         if (!canManageTenant(user, tenantId)) {
           sendJson(response, 401, { error: 'Autenticação necessária para salvar configuração.' });
+          return;
+        }
+
+        if (!(await isTenantSiteAccessible(tenantId)) && !hasRole(user, [ROLES.PLATFORM_ADMIN])) {
+          sendJson(response, 403, {
+            error: 'Site ou assinatura inativa. Edição bloqueada.',
+            code: 'SITE_INACCESSIBLE',
+            tenantId,
+          });
           return;
         }
 

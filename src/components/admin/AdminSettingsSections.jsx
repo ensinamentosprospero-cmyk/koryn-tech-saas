@@ -32,6 +32,18 @@ export function AdminStoreSettings() {
             rows={4}
           />
         </ConfigField>
+        <ConfigField label="Logo (URL)" hint="Se vazio, usa o ícone padrão">
+          <ConfigInput value={store.logoUrl || ''} onChange={(value) => updateStore('logoUrl', value)} />
+        </ConfigField>
+        <ConfigField label="Banner principal (URL)" hint="Imagem de destaque / compartilhamento">
+          <ConfigInput
+            value={store.bannerUrl || ''}
+            onChange={(value) => updateStore('bannerUrl', value)}
+          />
+        </ConfigField>
+        <ConfigField label="Endereço completo">
+          <ConfigInput value={store.address || ''} onChange={(value) => updateStore('address', value)} />
+        </ConfigField>
       </div>
     </AdminPanel>
   );
@@ -263,6 +275,103 @@ export function AdminAccessSettings() {
           <span className="font-bold text-slate-700">korynadmin</span>. As alterações do visitante
           são salvas automaticamente neste navegador.
         </p>
+      </AdminPanel>
+    </div>
+  );
+}
+
+export function AdminThemeSettings() {
+  const { theme, updateTheme } = useSiteConfig();
+
+  return (
+    <AdminPanel>
+      <AdminPanelHeader
+        title="Cores do tema"
+        description="Cor principal e secundária aplicadas nos botões e destaques"
+      />
+      <AdminGrid>
+        <ConfigField label="Cor principal">
+          <ConfigInput
+            type="color"
+            value={theme.primaryColor}
+            onChange={(value) => updateTheme('primaryColor', value)}
+          />
+        </ConfigField>
+        <ConfigField label="Cor secundária">
+          <ConfigInput
+            type="color"
+            value={theme.secondaryColor}
+            onChange={(value) => updateTheme('secondaryColor', value)}
+          />
+        </ConfigField>
+      </AdminGrid>
+    </AdminPanel>
+  );
+}
+
+export function AdminCategoriesSettings() {
+  const { categories, updateCategories } = useSiteConfig();
+
+  return (
+    <AdminPanel>
+      <AdminPanelHeader
+        title="Categorias de produtos"
+        description="Uma categoria por linha — usadas nos filtros e no cadastro"
+      />
+      <ConfigField label="Lista de categorias">
+        <ConfigTextarea
+          value={categories.join('\n')}
+          onChange={(value) =>
+            updateCategories(
+              value
+                .split('\n')
+                .map((item) => item.trim())
+                .filter(Boolean)
+            )
+          }
+          rows={8}
+        />
+      </ConfigField>
+    </AdminPanel>
+  );
+}
+
+export function AdminCopySettings() {
+  const { copy, updateCopy } = useSiteConfig();
+
+  return (
+    <div className="space-y-5">
+      <AdminPanel>
+        <AdminPanelHeader title="Títulos das seções" description="Textos exibidos no site público" />
+        <div className="space-y-4">
+          <ConfigField label="Ofertas">
+            <ConfigInput
+              value={copy.sectionOffers}
+              onChange={(value) => updateCopy('sectionOffers', value)}
+            />
+          </ConfigField>
+          <ConfigField label="Produtos">
+            <ConfigInput
+              value={copy.sectionProducts}
+              onChange={(value) => updateCopy('sectionProducts', value)}
+            />
+          </ConfigField>
+          <ConfigField label="FAQ">
+            <ConfigInput value={copy.sectionFaq} onChange={(value) => updateCopy('sectionFaq', value)} />
+          </ConfigField>
+          <ConfigField label="Chamada final">
+            <ConfigInput
+              value={copy.sectionCtaTitle}
+              onChange={(value) => updateCopy('sectionCtaTitle', value)}
+            />
+          </ConfigField>
+          <ConfigField label="Botão WhatsApp (CTA)">
+            <ConfigInput
+              value={copy.sectionCtaButton}
+              onChange={(value) => updateCopy('sectionCtaButton', value)}
+            />
+          </ConfigField>
+        </div>
       </AdminPanel>
     </div>
   );

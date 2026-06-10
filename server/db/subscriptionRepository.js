@@ -263,7 +263,8 @@ export async function seedSubscriptionsForExistingTenants() {
 
 export async function listTenantsWithSubscriptions() {
   const rows = await queryAll(
-    `SELECT t.id, t.name, t.active, t.created_at, t.updated_at, u.email AS owner_email
+    `SELECT t.id, t.name, t.active, t.template_id, t.status, t.client_name, t.client_email,
+            t.created_at, t.updated_at, u.email AS owner_email
      FROM tenants t
      LEFT JOIN users u ON u.tenant_id = t.id AND u.role = 'tenant_owner'
      ORDER BY t.created_at DESC, t.id ASC`
@@ -275,7 +276,11 @@ export async function listTenantsWithSubscriptions() {
       id: tenant.id,
       name: tenant.name,
       active: fromActiveValue(tenant.active),
-      ownerEmail: tenant.owner_email || null,
+      templateId: tenant.template_id || 'koryn-electronics-v1',
+      status: tenant.status || 'active',
+      clientName: tenant.client_name || null,
+      clientEmail: tenant.client_email || null,
+      ownerEmail: tenant.owner_email || tenant.client_email || null,
       createdAt: tenant.created_at || null,
       updatedAt: tenant.updated_at || null,
       subscription: await getTenantSubscription(tenant.id),

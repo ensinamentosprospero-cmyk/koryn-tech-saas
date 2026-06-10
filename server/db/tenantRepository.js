@@ -23,6 +23,9 @@ import {
   seedSubscriptionsForExistingTenants,
 } from './subscriptionRepository.js';
 import { generateOwnerPassword } from '../utils/generatePassword.js';
+import { DEFAULT_TEMPLATE_ID, SITE_STATUSES, normalizeSiteStatus } from './saasConstants.js';
+import { ensureSaasSchema } from './saasSchema.js';
+import { cloneTemplateConfig, getSiteTemplate, seedSiteTemplates } from './templateRepository.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const LEGACY_DATA_DIR = path.join(__dirname, '..', 'data', 'tenants');
@@ -30,13 +33,26 @@ const LEGACY_REGISTRY_PATH = path.join(LEGACY_DATA_DIR, 'registry.json');
 
 async function upsertTenant(tenant) {
   await execute(
-    `INSERT INTO tenants (id, name, active, updated_at)
-     VALUES (?, ?, ?, ${sqlNow()})
+    `INSERT INTO tenants (
+       id, name, active, template_id, status, client_name, client_email, updated_at
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ${sqlNow()})
      ON CONFLICT(id) DO UPDATE SET
        name = excluded.name,
        active = excluded.active,
+       template_id = COALESCE(excluded.template_id, tenants.template_id),
+       status = COALESCE(excluded.status, tenants.status),
+       client_name = COALESCE(excluded.client_name, tenants.client_name),
+       client_email = COALESCE(excluded.client_email, tenants.client_email),
        updated_at = ${sqlNow()}`,
-    [tenant.id, tenant.name, toActiveValue(tenant.active !== false)]
+    [
+      tenant.id,
+      tenant.name,
+      toActiveValue(tenant.active !== false),
+      tenant.templateId || DEFAULT_TEMPLATE_ID,
+      normalizeSiteStatus(tenant.status || SITE_STATUSES.ACTIVE),
+      tenant.clientName || null,
+      tenant.clientEmail || null,
+    ]
   );
 }
 
@@ -107,13 +123,38 @@ function mapTenantRow(row) {
     id: row.id,
     name: row.name,
     active: fromActiveValue(row.active),
+    templateId: row.template_id || DEFAULT_TEMPLATE_ID,
+    status: normalizeSiteStatus(row.status || SITE_STATUSES.ACTIVE),
+    clientName: row.client_name || null,
+    clientEmail: row.client_email || null,
+    ownerEmail: row.owner_email || row.client_email || null,
+    createdAt: row.created_at || null,
+    updatedAt: row.updated_at || null,
   };
+}
+
+const TENANT_SELECT =
+  'SELECT t.id, t.name, t.active, t.template_id, t.status, t.client_name, t.client_email, t.created_at, t.updated_at';
+
+export async function getTenantRecord(tenantId) {
+  const row = await queryOne(`${TENANT_SELECT} FROM tenants t WHERE t.id = ?`, [tenantId]);
+  return row ? mapTenantRow(row) : null;
+}
+
+export async function isTenantSiteAccessible(tenantId) {
+  const tenant = await getTenantRecord(tenantId);
+  if (!tenant || !tenant.active) return false;
+  if (tenant.status === SITE_STATUSES.SUSPENDED) return false;
+  return isTenantSubscriptionActive(tenantId);
 }
 
 export async function listTenants() {
   const rows = await queryAll(
-    `SELECT id, name, active FROM tenants WHERE active = ? ORDER BY id ASC`,
-    [toActiveValue(true)]
+    `${TENANT_SELECT}
+     FROM tenants t
+     WHERE t.active = ? AND t.status = ?
+     ORDER BY t.id ASC`,
+    [toActiveValue(true), SITE_STATUSES.ACTIVE]
   );
 
   const tenants = [];
@@ -128,14 +169,27 @@ export async function listTenants() {
 }
 
 export async function listAllTenants() {
-  const rows = await queryAll('SELECT id, name, active FROM tenants ORDER BY id ASC');
+  const rows = await queryAll(
+    `${TENANT_SELECT}, u.email AS owner_email
+     FROM tenants t
+     LEFT JOIN users u ON u.tenant_id = t.id AND u.role = 'tenant_owner'
+     ORDER BY t.created_at DESC, t.id ASC`
+  );
   return rows.map(mapTenantRow);
 }
 
 const TENANT_ID_PATTERN = /^[a-z0-9][a-z0-9-]{1,30}[a-z0-9]$/;
 const OWNER_EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export async function createTenant({ id, name, ownerEmail, ownerPassword }) {
+export async function createTenant({
+  id,
+  name,
+  ownerEmail,
+  ownerPassword,
+  templateId = DEFAULT_TEMPLATE_ID,
+  status = SITE_STATUSES.DRAFT,
+  clientName,
+}) {
   const tenantId = String(id || '')
     .trim()
     .toLowerCase();
@@ -161,18 +215,41 @@ export async function createTenant({ id, name, ownerEmail, ownerPassword }) {
     return { error: 'Já existe uma loja com este ID.' };
   }
 
+  const template = await getSiteTemplate(templateId);
+  if (!template) {
+    return { error: 'Modelo de site não encontrado.' };
+  }
+
   const generatedPassword = !String(ownerPassword || '').trim();
   const password = generatedPassword ? generateOwnerPassword() : String(ownerPassword).trim();
 
-  const config = createBootstrapConfig(tenantId, tenantName);
+  const config = (await cloneTemplateConfig(templateId)) || createBootstrapConfig(tenantId, tenantName);
+  config.store = {
+    ...config.store,
+    name: tenantName,
+  };
   config.auth = {
     adminEmail: email,
     adminPassword: password,
     userEmail: 'cliente@koryntech.com',
     userPassword: 'cliente123',
+    registeredUsers: [],
+  };
+  config.analytics = {
+    pageViews: 0,
+    whatsAppClicks: 0,
+    lastVisit: null,
   };
 
-  await upsertTenant({ id: tenantId, name: tenantName, active: true });
+  await upsertTenant({
+    id: tenantId,
+    name: tenantName,
+    active: true,
+    templateId,
+    status,
+    clientName: clientName || tenantName,
+    clientEmail: email,
+  });
   await upsertTenantConfig(tenantId, config);
   await ensureTenantSubscription(tenantId);
 
@@ -187,7 +264,7 @@ export async function createTenant({ id, name, ownerEmail, ownerPassword }) {
     return { error: userResult.error };
   }
 
-  const row = await queryOne('SELECT id, name, active FROM tenants WHERE id = ?', [tenantId]);
+  const row = await queryOne(`${TENANT_SELECT} FROM tenants t WHERE t.id = ?`, [tenantId]);
   const subscription = await getTenantSubscription(tenantId);
 
   return {
@@ -199,12 +276,14 @@ export async function createTenant({ id, name, ownerEmail, ownerPassword }) {
       trialEndsAt: subscription?.trialEndsAt || null,
       planId: subscription?.planId || 'starter',
       planName: subscription?.planName || 'Starter',
+      templateId,
+      status: normalizeSiteStatus(status),
     },
   };
 }
 
 export async function updateTenant(tenantId, patch) {
-  const row = await queryOne('SELECT id, name, active FROM tenants WHERE id = ?', [tenantId]);
+  const row = await queryOne(`${TENANT_SELECT} FROM tenants t WHERE t.id = ?`, [tenantId]);
   if (!row) {
     return { error: 'Tenant não encontrado.' };
   }
@@ -212,19 +291,34 @@ export async function updateTenant(tenantId, patch) {
   const nextName = patch.name !== undefined ? String(patch.name).trim() : row.name;
   const nextActive =
     patch.active !== undefined ? toActiveValue(patch.active) : toActiveValue(fromActiveValue(row.active));
+  const nextStatus =
+    patch.status !== undefined ? normalizeSiteStatus(patch.status) : normalizeSiteStatus(row.status);
+  const nextTemplateId =
+    patch.templateId !== undefined ? String(patch.templateId).trim() : row.template_id || DEFAULT_TEMPLATE_ID;
+  const nextClientName =
+    patch.clientName !== undefined ? String(patch.clientName).trim() || null : row.client_name;
+  const nextClientEmail =
+    patch.clientEmail !== undefined ? String(patch.clientEmail).trim().toLowerCase() || null : row.client_email;
 
   if (!nextName) {
     return { error: 'Nome da loja é obrigatório.' };
   }
 
+  if (patch.templateId !== undefined) {
+    const template = await getSiteTemplate(nextTemplateId);
+    if (!template) {
+      return { error: 'Modelo de site não encontrado.' };
+    }
+  }
+
   await execute(
     `UPDATE tenants
-     SET name = ?, active = ?, updated_at = ${sqlNow()}
+     SET name = ?, active = ?, status = ?, template_id = ?, client_name = ?, client_email = ?, updated_at = ${sqlNow()}
      WHERE id = ?`,
-    [nextName, nextActive, tenantId]
+    [nextName, nextActive, nextStatus, nextTemplateId, nextClientName, nextClientEmail, tenantId]
   );
 
-  const updated = await queryOne('SELECT id, name, active FROM tenants WHERE id = ?', [tenantId]);
+  const updated = await queryOne(`${TENANT_SELECT} FROM tenants t WHERE t.id = ?`, [tenantId]);
   return { tenant: mapTenantRow(updated) };
 }
 
@@ -247,29 +341,36 @@ export async function writeTenantConfig(tenantId, config) {
 }
 
 export async function isKnownTenant(tenantId, registry) {
-  if (!(await isTenantSubscriptionActive(tenantId))) {
-    return false;
-  }
+  const tenant = await getTenantRecord(tenantId);
+  if (!tenant || !tenant.active) return false;
+  if (tenant.status === SITE_STATUSES.SUSPENDED) return false;
+  if (!(await isTenantSubscriptionActive(tenantId))) return false;
 
   if (Array.isArray(registry) && registry.length > 0) {
-    return registry.some((tenant) => tenant.id === tenantId);
+    return registry.some((item) => item.id === tenantId);
   }
 
-  const row = await queryOne('SELECT id FROM tenants WHERE id = ? AND active = ?', [
-    tenantId,
-    toActiveValue(true),
-  ]);
-  return Boolean(row);
+  return true;
 }
 
 export async function bootstrapDatabase() {
   await ensurePostgresSchema();
+  await ensureSaasSchema();
 
   const migration = await migrateLegacyJsonStore();
 
   if (!migration.migrated && migration.reason === 'no-legacy-json') {
     await seedDefaultTenants();
   }
+
+  await seedSiteTemplates();
+
+  await execute(
+    `UPDATE tenants
+     SET template_id = ?, status = COALESCE(status, ?)
+     WHERE template_id IS NULL OR template_id = ''`,
+    [DEFAULT_TEMPLATE_ID, SITE_STATUSES.ACTIVE]
+  );
 
   await syncUsersFromTenantConfigs();
   await seedSubscriptionPlans();
